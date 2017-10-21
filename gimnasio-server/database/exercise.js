@@ -72,7 +72,7 @@ function getExercisesByMuscle(db,args){
         }
     });
 }
-function getExerciseByTag(db,args) {
+function getExerciseByTag(db, args) {
 
     var tag = args[0];
 
