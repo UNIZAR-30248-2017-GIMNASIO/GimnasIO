@@ -25,7 +25,7 @@ function getRoutinesByName (db, args) {
 
     var name = args[1];
 
-    collection.find([{nameGym: nameGym, name: name}]).toArray(function (err, result) {
+    collection.findOne([{nameGym: nameGym, name: name}]).toArray(function (err, result) {
         if (!err) {
 
             console.log('Getting routine ' + name + 'of Gym: ' + nameGym);
