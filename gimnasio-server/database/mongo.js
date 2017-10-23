@@ -1,20 +1,26 @@
 var MongoClient = require('mongodb').MongoClient;
 
 var exercise = require('./exercise');
+var routine = require('./routine');
 
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
-function connect(callback, args) {
+function connect(u, p, callback, args) {
     MongoClient.connect(url, function (err, db) {
-        if (err) {
-            console.log(err);
-            return undefined;
-        }
-        else {
-            callback(db, args);
-            return db;
-        }
+        //db.authenticate('user', 'name', function(err, result) {
+            //assert.equal(true, result);
+            if (err) {
+                console.log(err);
+                return err;
+            }
+            else {
+                callback(db, args);
+                return db;
+            }
+            db.close();
+        //});
+
     });
 }
 
@@ -50,10 +56,37 @@ function getExercises(callback){
 //function deleteExerciseByName(name, callback) {
 //connect(exercise.deleteExerciseByName, [name, callback])
 //}
+
+
 //=======================================Routine tables===============================================================
+function insertRoutine(nameGym, name, objective, series, rep, relaxTime){
+
+    connect(exercise.insertRoutine, [nameGym, name, objective, series, rep, relaxTime]);
+
+}
+
+function getRoutineByName(nameGym, name,callback){
+
+    connect(exercise.getRoutineByName, [nameGym, name, callback]);
+
+}
+function getRoutinesByObjective(nameGym, objective,callback){
+
+    connect(exercise.getRoutinesByObjective, [nameGym, objective, callback]);
+
+}
+
+function getRoutineOfAGym(nameGym, callback){
+
+    connect(exercise.getRoutineOfAGym,[nameGym, callback]);
+
+}
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercisesByMuscle = getExercisesByMuscle;
 exports.getExerciseByTag = getExerciseByTag;
 exports.getExercises = getExercises;
-
+exports.insertRoutine = insertRoutine;
+exports.getRoutineByName = getRoutineByName;
+exports.getRoutinesByObjective = getRoutinesByObjective;
+exports.getRoutineOfAGym = getRoutineOfAGym;

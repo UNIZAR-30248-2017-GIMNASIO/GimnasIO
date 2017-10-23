@@ -16,14 +16,11 @@ function insertExercise(db,args){
         });
     };
     var ext = fileExtension(args[3]);
-    console.log(ext);
     var destiny = './' + args[0] + '.' + ext;
     download(imageURL, destiny, function(){
-        console.log('done');
+        //console.log('done');
     });
-
     //Insert a new exercise
-    console.log(args[0]);
     collection.insert([{name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
         function (err) {
             if (err) {
