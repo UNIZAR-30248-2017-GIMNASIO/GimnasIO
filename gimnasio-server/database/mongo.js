@@ -2,25 +2,21 @@ var MongoClient = require('mongodb').MongoClient;
 
 var exercise = require('./exercise');
 var routine = require('./routine');
+var gym = require('./gym');
 
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
-function connect(u, p, callback, args) {
+function connect(callback, args) {
     MongoClient.connect(url, function (err, db) {
-        //db.authenticate('user', 'name', function(err, result) {
-            //assert.equal(true, result);
-            if (err) {
-                console.log(err);
-                return err;
-            }
-            else {
-                callback(db, args);
-                return db;
-            }
-            db.close();
-        //});
-
+        if (err) {
+            console.log(err);
+            return undefined;
+        }
+        else {
+            callback(db, args);
+            return db;
+        }
     });
 }
 
