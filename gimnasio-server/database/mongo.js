@@ -1,6 +1,8 @@
 var MongoClient = require('mongodb').MongoClient;
 
 var exercise = require('./exercise');
+var routine = require('./routine');
+var gym = require('./gym');
 
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
@@ -47,13 +49,51 @@ function getExercises(callback){
 
 }
 
-//function deleteExerciseByName(name, callback) {
-//connect(exercise.deleteExerciseByName, [name, callback])
-//}
+//=======================================Gym tables===============================================================
+function insertNewGym (nameGym) {
+    connect(gym.insertNewGym, [nameGym]);
+}
+
+function getUserKey (nameGym, callback) {
+    connect(gym.getUserKey, [nameGym, callback]);
+}
+
+function getCoachKey (nameGym, callback) {
+    connect(gym.getCoachKey, [nameGym, callback]);
+}
+
 //=======================================Routine tables===============================================================
+function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercises){
+
+    connect(exercise.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises]);
+
+}
+
+function getRoutineByName(nameGym, name,callback){
+
+    connect(exercise.getRoutineByName, [nameGym, name, callback]);
+
+}
+function getRoutinesByObjective(nameGym, objective,callback){
+
+    connect(exercise.getRoutinesByObjective, [nameGym, objective, callback]);
+
+}
+
+function getRoutineOfAGym(nameGym, callback){
+
+    connect(exercise.getRoutineOfAGym,[nameGym, callback]);
+
+}
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercisesByMuscle = getExercisesByMuscle;
 exports.getExerciseByTag = getExerciseByTag;
 exports.getExercises = getExercises;
-
+exports.insertNewGym=insertNewGym;
+exports.getUserKey = getUserKey;
+exports.getCoachKey = getCoachKey;
+exports.insertRoutine = insertRoutine;
+exports.getRoutineByName = getRoutineByName;
+exports.getRoutinesByObjective = getRoutinesByObjective;
+exports.getRoutineOfAGym = getRoutineOfAGym;
