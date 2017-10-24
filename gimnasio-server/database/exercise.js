@@ -1,5 +1,3 @@
-var request = require('request');
-
 function insertExercise(db,args){
 
     var collection = db.collection('exercises');
@@ -7,8 +5,8 @@ function insertExercise(db,args){
     var imageURL = args[3];
 
     var fs = require('fs');
-
-    //var request = require('request');
+    var fileExtension = require('file-extension');
+    var request = require('request');
     var download = function(uri, filename, callback){
         request.head(uri, function(err, res, body){
             console.log('content-type:', res.headers['content-type']);
@@ -17,13 +15,12 @@ function insertExercise(db,args){
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
     };
-    var destiny = './' + args[0] + '.gif';
+    var ext = fileExtension(args[3]);
+    var destiny = './imgs/' + args[0] + '.' + ext;
     download(imageURL, destiny, function(){
-        console.log('done');
+        //console.log('done');
     });
-
     //Insert a new exercise
-    console.log(args[0]);
     collection.insert([{name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
         function (err) {
             if (err) {
@@ -37,7 +34,7 @@ function insertExercise(db,args){
 
     db.close();
 
-    return true;
+    //return true;
 
 }
 
@@ -74,7 +71,7 @@ function getExercisesByMuscle(db,args){
         }
     });
 }
-function getExerciseByTag(db, args) {
+function getExerciseByTag(db,args) {
 
     var tag = args[0];
 
@@ -112,7 +109,7 @@ function deleteExerciseByName(name, callback) {
 
 }**/
 
-//exports.insertExercise = insertExercise;
+exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercisesByMuscle = getExercisesByMuscle;
 exports.getExerciseByTag = getExerciseByTag;
