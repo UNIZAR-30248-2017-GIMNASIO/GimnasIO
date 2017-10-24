@@ -63,9 +63,9 @@ function getCoachKey (nameGym, callback) {
 }
 
 //=======================================Routine tables===============================================================
-function insertRoutine(nameGym, name, objective, series, rep, relaxTime){
+function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercises){
 
-    connect(exercise.insertRoutine, [nameGym, name, objective, series, rep, relaxTime]);
+    connect(exercise.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises]);
 
 }
 

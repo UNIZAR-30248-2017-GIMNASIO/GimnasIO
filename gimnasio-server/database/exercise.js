@@ -16,7 +16,7 @@ function insertExercise(db,args){
         });
     };
     var ext = fileExtension(args[3]);
-    var destiny = './' + args[0] + '.' + ext;
+    var destiny = './imgs/' + args[0] + '.' + ext;
     download(imageURL, destiny, function(){
         //console.log('done');
     });

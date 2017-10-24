@@ -1,7 +1,7 @@
 function insertRoutine (db, args) {
     var collection = db.collection('routines');
-    collection.insert([{nameGym: args[0], name: args[1], objective: args[2], series: destiny, rep: args[4], relaxTime: args[5]}],
-        function (err) {
+    collection.insert([{nameGym: args[0], name: args[1], objective: args[2], series: destiny, rep: args[4],
+            relaxTime: args[5], exercises: args[6]}], function (err) {
             if (err) {
                 console.log('An error ocurred.');
                 console.log(err)
