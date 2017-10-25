@@ -51,8 +51,8 @@ function getExerciseByName(db, args){
             if (!exercise) {
                 console.log('Exercise with name: ' + name + ' not found');
             }
-            return callback(err, exercise);
         }
+        return callback(err, exercise);
     });
 
 }
@@ -67,8 +67,8 @@ function getExercisesByMuscle(db,args){
     collection.find({muscle: muscle}, function(err, result) {
         if (!err) {
             console.log('Getting all exercises which involves ' + muscle);
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 }
 function getExerciseByTag(db,args) {
@@ -82,8 +82,8 @@ function getExerciseByTag(db,args) {
     collection.find({tag: tag}, function(err, result) {
         if (!err) {
             console.log('Getting all exercises which involves ' + tag);
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 
 }
@@ -96,8 +96,8 @@ function getExercises(db, args){
     collection.find({}).toArray( function (err, result) {
         if (!err) {
             console.log('Getting all exercises');
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 
 }

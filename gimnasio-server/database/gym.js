@@ -8,7 +8,7 @@ function insertNewGym (db, args) {
 
     var tempCoachKey = nameGym + 'coachKey';
     var userKey = hash(tempUserKey);
-    var coachKey = hash(tempCoachKey)
+    var coachKey = hash(tempCoachKey);
 
     collection.insert([{nameGym: args[0], userKey: userKey, coachKey: coachKey}],
         function (err) {
@@ -36,8 +36,8 @@ function getUserKey (db, args) {
        if (!err) {
            console.log('Found gym with name ' + nameGym);
            console.log(result.userKey);
-           return callback(err, result.userKey);
        }
+       return callback(err, result.userKey);
     });
 }
 
@@ -50,8 +50,8 @@ function getCoachKey (db, args) {
     collection.findOne({nameGym: nameGym}, function (err, result) {
         if (!err) {
             console.log('Found gym with name ' + nameGym);
-            return callback(err, result.coachKey);
         }
+        return callback(err, result.coachKey);
     });
 }
 
