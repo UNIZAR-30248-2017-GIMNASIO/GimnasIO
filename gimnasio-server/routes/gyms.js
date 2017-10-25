@@ -59,8 +59,9 @@ router.post('/newGym', function(req, res, next) {
  *          -A feedback message
  */
 router.post('/newRoutine', function(req, res, next) {
-    //TODO Insertar una rutina asociada a un gym
-    res.send('rutina insertada');
+    mongoDb.insertRoutine(req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises);
+    //TODO comprobar si la insercion es correcta.
+    res.status(200).send("Insercion correcta");
 });
 
 module.exports = router;

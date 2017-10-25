@@ -9,7 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var exercises = require('./routes/exercises');
 var routines = require('./routes/routines');
-var gym = require('./routes/gym');
+var gym = require('./routes/gyms');
 
 var app = express();
 

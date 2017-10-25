@@ -36,8 +36,8 @@ function getUserKey (db, args) {
        if (!err) {
            console.log('Found gym with name ' + nameGym);
            console.log(result.userKey);
-           return callback(err, result.userKey);
        }
+       return callback(err, result.userKey);
     });
 }
 
@@ -50,8 +50,8 @@ function getCoachKey (db, args) {
     collection.findOne({nameGym: nameGym}, function (err, result) {
         if (!err) {
             console.log('Found gym with name ' + nameGym);
-            return callback(err, result.coachKey);
         }
+        return callback(err, result.coachKey);
     });
 }
 
