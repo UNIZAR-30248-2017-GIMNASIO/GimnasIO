@@ -79,5 +79,5 @@ function getRoutinesOfAGym (db, args) {
 
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
-exports.getRoutineByObjective = getRoutinesByObjective;
+exports.getRoutinesByObjective = getRoutinesByObjective;
 exports.getRoutinesByName = getRoutinesByName;

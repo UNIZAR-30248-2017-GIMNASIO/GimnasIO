@@ -1,12 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoDb = require('../database/mongo');
 /**
  * Type: POST
  * Name: gym/newGym
  * Description: Inserts a new Gym in the database and returns its keys.
  * Request:
- *      -nameGym: string
+ *      Body:
+ *          -nameGym: string
  * Responses:
  *      200:
  *          -JSON object containing access keys:
@@ -18,8 +20,28 @@ var router = express.Router();
  *          -A feedback message
  */
 router.post('/newGym', function(req, res, next) {
-    //TODO Insertar un gym y devolver las claves en un JSON
-    res.send('claves gym');
+    console.log(req);
+    mongoDb.insertNewGym(req.body.nameGym);
+    var coachKey = 0;
+    var userKey = 0;
+    mongoDb.getCoachKey(req.body.nameGym, function (err, result) {
+        if(!err){
+            coachKey = result;
+        }
+        else res.status(404).send('Error procesando la operación.');
+    });
+    mongoDb.getUserKey(req.body.nameGym, function (err, result) {
+        if(!err){
+            userKey = result;
+            //Sending the response
+            res.status(200).send({
+                "userKey": userKey,
+                "coachKey": coachKey
+            })
+        }
+        else res.status(404).send('Error procesando la operacion.');
+    });
+
 });
 
 /**

@@ -8,7 +8,7 @@ function insertNewGym (db, args) {
 
     var tempCoachKey = nameGym + 'coachKey';
     var userKey = hash(tempUserKey);
-    var coachKey = hash(tempCoachKey)
+    var coachKey = hash(tempCoachKey);
 
     collection.insert([{nameGym: args[0], userKey: userKey, coachKey: coachKey}],
         function (err) {

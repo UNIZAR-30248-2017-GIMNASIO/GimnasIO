@@ -25,9 +25,10 @@ var mongoDb = require('../database/mongo');
  */
 router.get('/', function(req, res, next) {
     mongoDb.getExercises(function (err, result) {
-        console.log("error: " + err);
-        console.log("result: " + result);
-        res.send(result);
+        if(!err){
+            res.status(200).send(result);
+        }
+        else res.status(404).send('Empty database. Please contact an administrator.');
     })
 });
 
