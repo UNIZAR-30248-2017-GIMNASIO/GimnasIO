@@ -19,11 +19,6 @@ function connect(callback, args) {
         }
     });
 }
-//=======================================Massive population============================================================
-
-function massiveInsertion(aa) {
-    connect(exercise.massiveInsertion, [aa]);
-}
 //=======================================Exercise tables===============================================================
 
 function insertExercise(name, muscle, description, images, tag, callback){
@@ -63,25 +58,12 @@ function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercis
 
 }
 
-function getRoutinesByName(nameGym, name,callback){
-
-    connect(routine.getRoutinesByName, [nameGym, name, callback]);
-
-}
-function getRoutinesByObjective(nameGym, objective,callback){
-
-    connect(routine.getRoutinesByObjective, [nameGym, objective, callback]);
-
-}
-
 function getRoutinesOfAGym(nameGym, callback){
 
     connect(routine.getRoutinesOfAGym,[nameGym, callback]);
 
 }
 
-
-exports.massiveInsertion = massiveInsertion;
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
@@ -89,6 +71,4 @@ exports.insertNewGym=insertNewGym;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
 exports.insertRoutine = insertRoutine;
-exports.getRoutinesByName = getRoutinesByName;
-exports.getRoutinesByObjective = getRoutinesByObjective;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;

@@ -15,36 +15,6 @@ function insertRoutine (db, args) {
     db.close();
 }
 
-function getRoutinesByName (db, args) {
-    var collection = db.collection('routines');
-    var callback = args[2];
-    var nameGym = args[0];
-    var name = args[1];
-
-    collection.findOne([{nameGym: nameGym, name: name}]).toArray(function (err, result) {
-        if (!err) {
-            console.log('Getting routine ' + name + 'of Gym: ' + nameGym);
-        }
-        return callback(err, result);
-    });
-    db.close();
-}
-
-function getRoutinesByObjective (db, args) {
-    var collection = db.collection('routines');
-    var callback = args[2];
-
-    collection.find([{nameGym: args[0], objective: args[1]}]).toArray(function (err, result) {
-        if (!err) {
-            console.log('Getting all routines of the gym ' + args[0] + 'with objective: ' + args[1]);
-        }
-        return callback(err, result);
-
-    });
-
-    db.close();
-}
-
 function getRoutinesOfAGym (db, args) {
     var collection = db.collection('routines');
     var callback = args[1];
@@ -59,5 +29,3 @@ function getRoutinesOfAGym (db, args) {
 
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
-exports.getRoutinesByObjective = getRoutinesByObjective;
-exports.getRoutinesByName = getRoutinesByName;
