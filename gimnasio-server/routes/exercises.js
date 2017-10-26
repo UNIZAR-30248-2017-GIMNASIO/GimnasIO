@@ -32,4 +32,44 @@ router.get('/', function(req, res, next) {
     })
 });
 
+router.get('/massive', function(req, res) {
+    // require csvtojson
+    var csv = require("csvtojson");
+
+    // Convert a csv file with csvtojson
+    var ok = true;
+    csv()
+        .fromFile('./data/files/ejercicios.csv')
+        .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
+            //console.log(jsonArrayObj);
+            if (jsonArrayObj != null) {
+                var n = 0;
+                jsonArrayObj.forEach( function (objeto) {
+                    var name = objeto.Nombre;
+                    var muscle = objeto.Musculos;
+                    var description = objeto.Descripcion;
+                    var image = objeto.Imagen;
+                    var tag = objeto.Tag;
+                    mongoDb.getExerciseByName(name, function (err, result) {
+                        if (!result) {
+                            mongoDb.insertExercise(name,muscle,description,image,tag, function (result) {
+                                if (result != 'OK') {
+                                    ok = false;
+                                }
+                            });
+                        } else {
+                            console.log('Exercise with name ' + name + ' found, maybe u wanna try to fuck my mongo?');
+                        }
+                    });
+
+                });
+                if (ok) {
+                    res.status(200).send('OK MORO');
+                }
+
+            }
+        });
+
+
+});
 module.exports = router;

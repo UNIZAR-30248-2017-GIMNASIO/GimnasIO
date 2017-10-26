@@ -34,17 +34,7 @@ function insertExercise(name, muscle, description, images, tag, callback){
 
 function getExerciseByName(name,callback){
 
-    connect(exercise.insertExercise, [name, callback]);
-
-}
-function getExercisesByMuscle(muscle,callback){
-
-    connect(exercise.insertExercise, [muscle, callback]);
-
-}
-function getExerciseByTag(tag,callback){
-
-    connect(exercise.insertExercise, [tag, callback]);
+    connect(exercise.getExerciseByName, [name, callback]);
 
 }
 function getExercises(callback){
@@ -94,8 +84,6 @@ function getRoutinesOfAGym(nameGym, callback){
 exports.massiveInsertion = massiveInsertion;
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
-exports.getExercisesByMuscle = getExercisesByMuscle;
-exports.getExerciseByTag = getExerciseByTag;
 exports.getExercises = getExercises;
 exports.insertNewGym=insertNewGym;
 exports.getUserKey = getUserKey;
