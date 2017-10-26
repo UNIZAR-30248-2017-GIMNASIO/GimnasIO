@@ -19,7 +19,11 @@ function connect(callback, args) {
         }
     });
 }
+//=======================================Massive population============================================================
 
+function massiveInsertion(aa) {
+    connect(exercise.massiveInsertion, [aa]);
+}
 //=======================================Exercise tables===============================================================
 
 function insertExercise(name, muscle, description, images, tag){
@@ -85,6 +89,9 @@ function getRoutineOfAGym(nameGym, callback){
     connect(exercise.getRoutineOfAGym,[nameGym, callback]);
 
 }
+
+
+exports.massiveInsertion = massiveInsertion;
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercisesByMuscle = getExercisesByMuscle;

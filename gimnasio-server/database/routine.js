@@ -1,6 +1,6 @@
 function insertRoutine (db, args) {
     var collection = db.collection('routines');
-    collection.insert([{nameGym: args[0], name: args[1], objective: args[2], series: destiny, rep: args[4],
+    collection.insert([{nameGym: args[0], name: args[1], objective: args[2], series: args[3], rep: args[4],
             relaxTime: args[5], exercises: args[6]}], function (err) {
             if (err) {
                 console.log('An error ocurred.');
@@ -25,7 +25,7 @@ function getRoutinesByName (db, args) {
 
     var name = args[1];
 
-    collection.findOne([{nameGym: nameGym, name: name}]).toArray(function (err, result) {
+    collection.findOne([{nameGym: nameGym, name: name}], function (err, result) {
         if (!err) {
 
             console.log('Getting routine ' + name + 'of Gym: ' + nameGym);
