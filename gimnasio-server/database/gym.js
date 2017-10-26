@@ -2,21 +2,26 @@ function insertNewGym (db, args) {
 
     var collection = db.collection('gyms');
 
+    var callback = args[1];
+
     var nameGym = args[0];
 
     var tempUserKey = nameGym + 'userKey';
 
     var tempCoachKey = nameGym + 'coachKey';
     var userKey = hash(tempUserKey);
-    var coachKey = hash(tempCoachKey)
+    var coachKey = hash(tempCoachKey);
+    if (nameGym.) {
 
+    }
     collection.insert([{nameGym: args[0], userKey: userKey, coachKey: coachKey}],
         function (err) {
             if (err) {
                 console.log('An error ocurred.');
-                console.log(err)
+                return callback(err);
             } else {
                 console.log('Inserted new gym with name ' + nameGym + ' userKey: ' +userKey +' coachKey: '+ coachKey);
+                return callback('OK');
             }
         }
     );
@@ -36,8 +41,8 @@ function getUserKey (db, args) {
        if (!err) {
            console.log('Found gym with name ' + nameGym);
            console.log(result.userKey);
-           return callback(err, result.userKey);
        }
+       return callback(err, result.userKey);
     });
 }
 
@@ -50,8 +55,8 @@ function getCoachKey (db, args) {
     collection.findOne({nameGym: nameGym}, function (err, result) {
         if (!err) {
             console.log('Found gym with name ' + nameGym);
-            return callback(err, result.coachKey);
         }
+        return callback(err, result.coachKey);
     });
 }
 

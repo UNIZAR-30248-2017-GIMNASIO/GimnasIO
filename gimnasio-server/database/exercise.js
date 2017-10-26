@@ -10,6 +10,7 @@ function massiveInsertion(db, args) {
 function insertExercise(db,args){
 
     var collection = db.collection('exercises');
+    var callback = args[5];
 
     var imageURL = args[3];
 
@@ -34,16 +35,15 @@ function insertExercise(db,args){
         function (err) {
             if (err) {
                 console.log('An error ocurred.');
-                console.log(err)
+                return callback(err);
             } else {
                 console.log('Inserted new exercise with name ' + args[0]);
+                return callback('OK');
             }
         }
     );
 
     db.close();
-
-    //return true;
 
 }
 
@@ -60,8 +60,8 @@ function getExerciseByName(db, args){
             if (!exercise) {
                 console.log('Exercise with name: ' + name + ' not found');
             }
-            return callback(err, exercise);
         }
+        return callback(err, exercise);
     });
 
 }
@@ -76,8 +76,8 @@ function getExercisesByMuscle(db,args){
     collection.find({muscle: muscle}, function(err, result) {
         if (!err) {
             console.log('Getting all exercises which involves ' + muscle);
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 }
 function getExerciseByTag(db,args) {
@@ -91,8 +91,8 @@ function getExerciseByTag(db,args) {
     collection.find({tag: tag}, function(err, result) {
         if (!err) {
             console.log('Getting all exercises which involves ' + tag);
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 
 }
@@ -105,8 +105,8 @@ function getExercises(db, args){
     collection.find({}).toArray( function (err, result) {
         if (!err) {
             console.log('Getting all exercises');
-            return callback(err, result);
         }
+        return callback(err, result);
     });
 
 }
