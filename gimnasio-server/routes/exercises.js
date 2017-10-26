@@ -32,6 +32,51 @@ router.get('/', function(req, res, next) {
     })
 });
 
+/**
+ * Type: POST
+ * Name: /exercises/insertion
+ * Description: Inserts a new exercise into database from json.
+ * Request:
+ *     -JSON object containing multiple exercise objects:
+ *     -id: string
+ *     -name: string
+ *     -muscle: string
+ *     -description: string
+ *     -images: [string]
+ *     -tag: string
+ * Responses:
+ *      200:
+ *          -A feedback message
+ *      404:
+ *          -A feedback message
+ *      500:
+ *          -A feedback message
+ */
+router.post('/insertion', function (req, res) {
+    var ok = true;
+    var name = req.body.name;
+    var muscle = req.body.muscle;
+    var description = req.body.description;
+    var image = req.body.image;
+    var tag = req.body.tag;
+    mongoDb.getExerciseByName(name, function (err, result) {
+        if (!result) {
+            mongoDb.insertExercise(name,muscle,description,image,tag, function (result) {
+                if (result != 'OK') {
+                    ok = false;
+                }
+            });
+        } else {
+            console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+        }
+    });
+
+    if (ok) {
+        res.status(200).send('OK MORO');
+    }
+
+});
+
 router.get('/massive', function(req, res) {
     // require csvtojson
     var csv = require("csvtojson");
