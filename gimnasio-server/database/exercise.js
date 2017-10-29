@@ -1,6 +1,15 @@
-function insertExercise(db,args){
+function massiveInsertion(db, args) {
 
     var collection = db.collection('exercises');
+
+
+
+    db.close();
+}
+
+function insertExercise(db,args){
+    var collection = db.collection('exercises');
+    var callback = args[5];
 
     var imageURL = args[3];
 
@@ -9,38 +18,38 @@ function insertExercise(db,args){
     var request = require('request');
     var download = function(uri, filename, callback){
         request.head(uri, function(err, res, body){
-            console.log('content-type:', res.headers['content-type']);
-            console.log('content-length:', res.headers['content-length']);
+            //console.log('content-type:', res.headers['content-type']);
+            //console.log('content-length:', res.headers['content-length']);
 
             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
         });
     };
     var ext = fileExtension(args[3]);
-    var destiny = './imgs/' + args[0] + '.' + ext;
+    var destiny = './data/images/' + args[0] + '.' + ext;
     download(imageURL, destiny, function(){
         //console.log('done');
     });
     //Insert a new exercise
-    collection.insert([{name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
+    collection.insert([{ name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
         function (err) {
             if (err) {
                 console.log('An error ocurred.');
-                console.log(err)
+                return callback(err);
             } else {
                 console.log('Inserted new exercise with name ' + args[0]);
+                return callback('OK');
             }
         }
     );
 
     db.close();
 
-    //return true;
-
 }
 
 function getExerciseByName(db, args){
 
     var name = args[0];
+    console.log('Searching by field name:  ' + name);
 
     var callback = args[1];
 
@@ -53,37 +62,6 @@ function getExerciseByName(db, args){
             }
         }
         return callback(err, exercise);
-    });
-
-}
-function getExercisesByMuscle(db,args){
-
-    var muscle = args[0];
-
-    var callback = args[1];
-
-    var collection = db.collection('exercises');
-
-    collection.find({muscle: muscle}, function(err, result) {
-        if (!err) {
-            console.log('Getting all exercises which involves ' + muscle);
-        }
-        return callback(err, result);
-    });
-}
-function getExerciseByTag(db,args) {
-
-    var tag = args[0];
-
-    var callback = args[1];
-
-    var collection = db.collection('exercises');
-
-    collection.find({tag: tag}, function(err, result) {
-        if (!err) {
-            console.log('Getting all exercises which involves ' + tag);
-        }
-        return callback(err, result);
     });
 
 }
@@ -111,6 +89,4 @@ function deleteExerciseByName(name, callback) {
 
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
-exports.getExercisesByMuscle = getExercisesByMuscle;
-exports.getExerciseByTag = getExerciseByTag;
 exports.getExercises = getExercises;

@@ -2,6 +2,8 @@ function insertNewGym (db, args) {
 
     var collection = db.collection('gyms');
 
+    var callback = args[1];
+
     var nameGym = args[0];
 
     var tempUserKey = nameGym + 'userKey';
@@ -14,9 +16,10 @@ function insertNewGym (db, args) {
         function (err) {
             if (err) {
                 console.log('An error ocurred.');
-                console.log(err)
+                return callback(err);
             } else {
                 console.log('Inserted new gym with name ' + nameGym + ' userKey: ' +userKey +' coachKey: '+ coachKey);
+                return callback('OK');
             }
         }
     );

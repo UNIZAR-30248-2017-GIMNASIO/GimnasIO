@@ -19,28 +19,17 @@ function connect(callback, args) {
         }
     });
 }
-
 //=======================================Exercise tables===============================================================
 
-function insertExercise(name, muscle, description, images, tag){
+function insertExercise(name, muscle, description, images, tag, callback){
 
-    connect(exercise.insertExercise, [name, muscle, description, images, tag]);
+    connect(exercise.insertExercise, [name, muscle, description, images, tag, callback]);
 
 }
 
 function getExerciseByName(name,callback){
 
-    connect(exercise.insertExercise, [name, callback]);
-
-}
-function getExercisesByMuscle(muscle,callback){
-
-    connect(exercise.insertExercise, [muscle, callback]);
-
-}
-function getExerciseByTag(tag,callback){
-
-    connect(exercise.insertExercise, [tag, callback]);
+    connect(exercise.getExerciseByName, [name, callback]);
 
 }
 function getExercises(callback){
@@ -50,8 +39,8 @@ function getExercises(callback){
 }
 
 //=======================================Gym tables===============================================================
-function insertNewGym (nameGym) {
-    connect(gym.insertNewGym, [nameGym]);
+function insertNewGym (nameGym, callback) {
+    connect(gym.insertNewGym, [nameGym, callback]);
 }
 
 function getUserKey (nameGym, callback) {
@@ -63,20 +52,9 @@ function getCoachKey (nameGym, callback) {
 }
 
 //=======================================Routine tables===============================================================
-function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercises){
+function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercises, callback){
 
-    connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises]);
-
-}
-
-function getRoutinesByName(nameGym, name,callback){
-
-    connect(routine.getRoutinesByName, [nameGym, name, callback]);
-
-}
-function getRoutinesByObjective(nameGym, objective,callback){
-
-    connect(routine.getRoutinesByObjective, [nameGym, objective, callback]);
+    connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback]);
 
 }
 
@@ -85,15 +63,12 @@ function getRoutinesOfAGym(nameGym, callback){
     connect(routine.getRoutinesOfAGym,[nameGym, callback]);
 
 }
+
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
-exports.getExercisesByMuscle = getExercisesByMuscle;
-exports.getExerciseByTag = getExerciseByTag;
 exports.getExercises = getExercises;
 exports.insertNewGym=insertNewGym;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
 exports.insertRoutine = insertRoutine;
-exports.getRoutinesByName = getRoutinesByName;
-exports.getRoutinesByObjective = getRoutinesByObjective;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
