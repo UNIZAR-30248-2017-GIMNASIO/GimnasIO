@@ -61,7 +61,7 @@ router.post('/newGym', function(req, res, next) {
  *          -A feedback message
  */
 router.post('/newRoutine', function(req, res, next) {
-    if(req.body){
+    if(req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){
         mongoDb.insertRoutine(req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises, function(err){
             if(err === 'OK'){
                 res.status(200).send("Inserción correcta.");
@@ -69,7 +69,7 @@ router.post('/newRoutine', function(req, res, next) {
             else res.status(404).send("Error de inserción. Comprueba los parametros.");
         });
     }
-    else res.status(404).send("Cuerpo de la petición vacío.");
+    else res.status(404).send("Cuerpo de la petición vacío o incompleto.");
 });
 
 module.exports = router;

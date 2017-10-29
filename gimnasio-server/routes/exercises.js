@@ -53,12 +53,12 @@ router.get('/', function(req, res, next) {
  */
 router.post('/insertion', function (req, res) {
     var ok = true;
-    var name = req.body.name;
-    var muscle = req.body.muscle;
-    var description = req.body.description;
-    var image = req.body.image;
-    var tag = req.body.tag;
-    if(name !== null && muscle !== null && image !== null && tag !== null){
+    if(req.body.name && req.body.muscle && req.body.image && req.body.tag){
+        var name = req.body.name;
+        var muscle = req.body.muscle;
+        var description = req.body.description;
+        var image = req.body.image;
+        var tag = req.body.tag;
         mongoDb.getExerciseByName(name, function (err, result) {
             if (!result) {
                 mongoDb.insertExercise(name,muscle,description,image,tag, function (result) {
@@ -75,6 +75,7 @@ router.post('/insertion', function (req, res) {
             res.status(200).send('OK');
         }
     }
+    else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
 });
 
 /**
