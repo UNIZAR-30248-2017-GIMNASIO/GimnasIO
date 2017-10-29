@@ -20,28 +20,24 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.post('/newGym', function(req, res, next) {
-    console.log(req);
-    mongoDb.insertNewGym(req.body.nameGym);
-    var coachKey = 0;
-    var userKey = 0;
-    mongoDb.getCoachKey(req.body.nameGym, function (err, result) {
-        if(!err){
-            coachKey = result;
-        }
-        else res.status(404).send('Error procesando la operación.');
-    });
-    mongoDb.getUserKey(req.body.nameGym, function (err, result) {
-        if(!err){
-            userKey = result;
-            //Sending the response
-            res.status(200).send({
-                "userKey": userKey,
-                "coachKey": coachKey
-            })
-        }
-        else res.status(404).send('Error procesando la operacion.');
-    });
-
+    console.log(req.headers);
+    if(!req.body.nameGym){
+        res.status(404).send('Error de inserción, nombre vacío.');
+        return 0;
+    }
+    else{
+        mongoDb.insertNewGym(req.body.nameGym, function(err, userKey, coachKey){
+            if(err === null){
+                res.status(200).send({
+                    "userKey": userKey,
+                    "coachKey": coachKey
+                })
+            }
+            else{
+                res.status(404).send(err);
+            }
+        });
+    }
 });
 
 /**
@@ -50,6 +46,12 @@ router.post('/newGym', function(req, res, next) {
  * Description: Inserts a new Routine in a specified Gym collection.
  * Request:
  *      -nameGym: string
+ *      -name: string
+ *      -objective: string
+ *      -series: string
+ *      -rep: int
+ *      -relaxTime: int
+ *      -exercises: [string]
  * Responses:
  *      200:
  *          -A feedback message
@@ -59,9 +61,15 @@ router.post('/newGym', function(req, res, next) {
  *          -A feedback message
  */
 router.post('/newRoutine', function(req, res, next) {
-    mongoDb.insertRoutine(req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises);
-    //TODO comprobar si la insercion es correcta.
-    res.status(200).send("Insercion correcta");
+    if(req.body){
+        mongoDb.insertRoutine(req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises, function(err){
+            if(err === 'OK'){
+                res.status(200).send("Inserción correcta.");
+            }
+            else res.status(404).send("Error de inserción. Comprueba los parametros.");
+        });
+    }
+    else res.status(404).send("Cuerpo de la petición vacío.");
 });
 
 module.exports = router;
