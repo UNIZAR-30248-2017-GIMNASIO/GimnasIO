@@ -8,6 +8,8 @@ var mongoDb = require('../database/mongo');
  * Description: Inserts a new Gym in the database and returns its keys.
  * Request:
  *      Body:
+ *          -user: string
+ *          -pwd: string
  *          -nameGym: string
  * Responses:
  *      200:
@@ -21,16 +23,18 @@ var mongoDb = require('../database/mongo');
  */
 router.post('/newGym', function(req, res, next) {
     console.log(req);
-    mongoDb.insertNewGym(req.body.nameGym);
+    var user = req.body.user;
+    var pwd = req.body.pwd;
+    mongoDb.insertNewGym(user, pwd, req.body.nameGym);
     var coachKey = 0;
     var userKey = 0;
-    mongoDb.getCoachKey(req.body.nameGym, function (err, result) {
+    mongoDb.getCoachKey(user, pwd, req.body.nameGym, function (err, result) {
         if(!err){
             coachKey = result;
         }
         else res.status(404).send('Error procesando la operación.');
     });
-    mongoDb.getUserKey(req.body.nameGym, function (err, result) {
+    mongoDb.getUserKey(user, pwd, req.body.nameGym, function (err, result) {
         if(!err){
             userKey = result;
             //Sending the response
@@ -49,6 +53,8 @@ router.post('/newGym', function(req, res, next) {
  * Name: gym/newRoutine
  * Description: Inserts a new Routine in a specified Gym collection.
  * Request:
+ *      -user: string
+ *      -pwd: string
  *      -nameGym: string
  * Responses:
  *      200:
@@ -59,7 +65,10 @@ router.post('/newGym', function(req, res, next) {
  *          -A feedback message
  */
 router.post('/newRoutine', function(req, res, next) {
-    mongoDb.insertRoutine(req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises);
+    var user = req.body.user;
+    var pwd = req.body.pwd;
+    mongoDb.insertRoutine(user, pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep,
+        req.body.relaxTime, req.body.exercises);
     //TODO comprobar si la insercion es correcta.
     res.status(200).send("Insercion correcta");
 });

@@ -7,8 +7,14 @@ var gym = require('./gym');
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
-function connect(callback, args) {
-    MongoClient.connect(url, function (err, db) {
+function connect(callback, args, u, p) {
+
+    MongoClient.connect(url, {
+        auth: {
+            user: u,
+            password: p
+        }
+    }, function (err,db) {
         if (err) {
             console.log(err);
             return undefined;
@@ -16,51 +22,52 @@ function connect(callback, args) {
         else {
             callback(db, args);
             return db;
+
         }
     });
 }
 //=======================================Exercise tables===============================================================
 
-function insertExercise(name, muscle, description, images, tag, callback){
+function insertExercise(u, p, name, muscle, description, images, tag, callback){
 
-    connect(exercise.insertExercise, [name, muscle, description, images, tag, callback]);
-
-}
-
-function getExerciseByName(name,callback){
-
-    connect(exercise.getExerciseByName, [name, callback]);
+    connect(exercise.insertExercise, [name, muscle, description, images, tag, callback], u, p);
 
 }
-function getExercises(callback){
 
-    connect(exercise.getExercises,[callback]);
+function getExerciseByName(u, p, name,callback){
+
+    connect(exercise.getExerciseByName, [name, callback], u, p);
+
+}
+function getExercises(u, p, callback){
+
+    connect(exercise.getExercises,[callback], u, p);
 
 }
 
 //=======================================Gym tables===============================================================
-function insertNewGym (nameGym, callback) {
-    connect(gym.insertNewGym, [nameGym, callback]);
+function insertNewGym (u, p, nameGym, callback) {
+    connect(gym.insertNewGym, [nameGym, callback], u, p);
 }
 
-function getUserKey (nameGym, callback) {
-    connect(gym.getUserKey, [nameGym, callback]);
+function getUserKey (u, p, nameGym, callback) {
+    connect(gym.getUserKey, [nameGym, callback], u, p);
 }
 
-function getCoachKey (nameGym, callback) {
-    connect(gym.getCoachKey, [nameGym, callback]);
+function getCoachKey (u, p, nameGym, callback) {
+    connect(gym.getCoachKey, [nameGym, callback], u, p);
 }
 
 //=======================================Routine tables===============================================================
-function insertRoutine(nameGym, name, objective, series, rep, relaxTime, exercises, callback){
+function insertRoutine(u, p, nameGym, name, objective, series, rep, relaxTime, exercises, callback){
 
-    connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback]);
+    connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback], u, p);
 
 }
 
-function getRoutinesOfAGym(nameGym, callback){
+function getRoutinesOfAGym(u, p, nameGym, callback){
 
-    connect(routine.getRoutinesOfAGym,[nameGym, callback]);
+    connect(routine.getRoutinesOfAGym,[nameGym, callback], u, p);
 
 }
 

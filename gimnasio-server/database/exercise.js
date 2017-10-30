@@ -1,12 +1,3 @@
-function massiveInsertion(db, args) {
-
-    var collection = db.collection('exercises');
-
-
-
-    db.close();
-}
-
 function insertExercise(db,args){
     var collection = db.collection('exercises');
     var callback = args[5];
