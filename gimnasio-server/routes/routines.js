@@ -24,7 +24,7 @@ var mongoDb = require('../database/mongo');
  *      500:
  *          -A feedback message
  */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res,) {
     var userKey = 0;
     var coachKey = 0;
     if(req.headers.nameGym !== null && req.headers.key !== null){
@@ -60,7 +60,7 @@ router.get('/', function(req, res, next) {
             }
         });
     }
-    else res.status(404).send('namegym e id headers inexistentes.')
+    else res.status(404).send('Cabeceras de la petición vacía o incompleta.')
 });
 
 module.exports = router;

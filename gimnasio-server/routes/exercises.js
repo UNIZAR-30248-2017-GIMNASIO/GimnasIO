@@ -56,48 +56,29 @@ router.get('/', function(req, res, next) {
  */
 router.post('/insertion', function (req, res) {
     var ok = true;
-    var name = req.body.name;
-    var muscle = req.body.muscle;
-    var description = req.body.description;
-    var image = req.body.image;
-    var tag = req.body.tag;
-    var user = req.body.user;
-    var pwd = req.body.pwd;
-    console.log(user);
-    console.log(pwd);
-    mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
-        if (!result) {
-            mongoDb.insertExercise(user, pwd, name,muscle,description,image,tag, function (result) {
-                if (result != 'OK') {
-                    ok = false;
-                }
-            });
-        } else {
-            console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
-        }
-    });
-    // TODO: fix
-    if(req.body.name && req.body.muscle && req.body.image && req.body.tag){
-        var name = req.body.name;
-        var muscle = req.body.muscle;
-        var description = req.body.description;
-        var image = req.body.image;
-        var tag = req.body.tag;
-        mongoDb.getExerciseByName(name, function (err, result) {
-            if (!result) {
-                mongoDb.insertExercise(name,muscle,description,image,tag, function (result) {
-                    if (result !== 'OK') {
-                        ok = false;
-                    }
-                });
-            } else {
-                console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
-            }
-        });
 
-        if(ok){
-            res.status(200).send('OK');
-        }
+    if (req.body.user && req.body.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
+        mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
+                var user = req.body.user;
+                var pwd = req.body.pwd;
+                var name = req.body.name;
+                var muscle = req.body.muscle;
+                var description = req.body.description;
+                var image = req.body.image;
+                var tag = req.body.tag;
+                mongoDb.getExerciseByName(name, function (err, result) {
+                    if (!result) {
+                        mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
+                            if (result !== 'OK') {
+                                ok = false;
+                            }
+                        });
+                    } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+                });
+                if (ok) {
+                    res.status(200).send('OK');
+                }
+        });
     }
     else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
 });
@@ -137,7 +118,7 @@ router.post('/massive', function(req, res) {
 
                 });
                 if (ok) {
-                    res.status(200).send('OK MORO');
+                    res.status(200).send('OK');
                 }
 
             }
