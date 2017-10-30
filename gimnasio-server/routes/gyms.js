@@ -8,6 +8,8 @@ var mongoDb = require('../database/mongo');
  * Description: Inserts a new Gym in the database and returns its keys.
  * Request:
  *      Body:
+ *          -user: string
+ *          -pwd: string
  *          -nameGym: string
  * Responses:
  *      200:
@@ -20,6 +22,31 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.post('/newGym', function(req, res, next) {
+    console.log(req);
+    var user = req.body.user;
+    var pwd = req.body.pwd;
+    mongoDb.insertNewGym(user, pwd, req.body.nameGym);
+    var coachKey = 0;
+    var userKey = 0;
+    mongoDb.getCoachKey(user, pwd, req.body.nameGym, function (err, result) {
+        if(!err){
+            coachKey = result;
+        }
+        else res.status(404).send('Error procesando la operación.');
+    });
+    mongoDb.getUserKey(user, pwd, req.body.nameGym, function (err, result) {
+        if(!err){
+            userKey = result;
+            //Sending the response
+            res.status(200).send({
+                "userKey": userKey,
+                "coachKey": coachKey
+            })
+        }
+        else res.status(404).send('Error procesando la operacion.');
+    });
+
+    //TODO: fix
     console.log(req.headers);
     if(!req.body.nameGym){
         res.status(404).send('Error de inserción, nombre vacío.');
@@ -45,6 +72,8 @@ router.post('/newGym', function(req, res, next) {
  * Name: gym/newRoutine
  * Description: Inserts a new Routine in a specified Gym collection.
  * Request:
+ *      -user: string
+ *      -pwd: string
  *      -nameGym: string
  *      -name: string
  *      -objective: string
@@ -70,6 +99,12 @@ router.post('/newRoutine', function(req, res, next) {
         });
     }
     else res.status(404).send("Cuerpo de la petición vacío o incompleto.");
+    //TODO: fix
+    var user = req.body.user;
+    var pwd = req.body.pwd;
+    mongoDb.insertRoutine(user, pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep,
+        req.body.relaxTime, req.body.exercises);
+    res.status(200).send("Insercion correcta");
 });
 
 module.exports = router;

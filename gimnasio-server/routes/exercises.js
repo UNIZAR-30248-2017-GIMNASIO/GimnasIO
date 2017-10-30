@@ -24,7 +24,7 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res, next) {
-    mongoDb.getExercises(function (err, result) {
+    mongoDb.getExercises('adminGPS', 'gimnasIOapp', function (err, result) {
         if(!err){
             res.status(200).send(result);
         }
@@ -38,11 +38,14 @@ router.get('/', function(req, res, next) {
  * Description: Inserts a new exercise into database from json.
  * Request:
  *     -Body: JSON exercise object
- *          -name: string
- *          -muscle: string
- *          -description: string
- *          -images: [string]
- *          -tag: string
+ *       -id: string
+ *       -name: string
+ *       -muscle: string
+ *       -description: string
+ *       -images: [string]
+ *       -tag: string
+ *       -user: string
+ *       -pwd: string
  * Responses:
  *      200:
  *          -A feedback message
@@ -53,6 +56,27 @@ router.get('/', function(req, res, next) {
  */
 router.post('/insertion', function (req, res) {
     var ok = true;
+    var name = req.body.name;
+    var muscle = req.body.muscle;
+    var description = req.body.description;
+    var image = req.body.image;
+    var tag = req.body.tag;
+    var user = req.body.user;
+    var pwd = req.body.pwd;
+    console.log(user);
+    console.log(pwd);
+    mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
+        if (!result) {
+            mongoDb.insertExercise(user, pwd, name,muscle,description,image,tag, function (result) {
+                if (result != 'OK') {
+                    ok = false;
+                }
+            });
+        } else {
+            console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+        }
+    });
+    // TODO: fix
     if(req.body.name && req.body.muscle && req.body.image && req.body.tag){
         var name = req.body.name;
         var muscle = req.body.muscle;
@@ -99,9 +123,9 @@ router.post('/massive', function(req, res) {
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;
                     var tag = objeto.Tag;
-                    mongoDb.getExerciseByName(name, function (err, result) {
+                    mongoDb.getExerciseByName('adminGPS', 'gimnasIOapp', name, function (err, result) {
                         if (!result) {
-                            mongoDb.insertExercise(name,muscle,description,image,tag, function (result) {
+                            mongoDb.insertExercise('adminGPS', 'gimnasIOapp', name,muscle,description,image,tag, function (result) {
                                 if (result !== 'OK') {
                                     ok = false;
                                 }
