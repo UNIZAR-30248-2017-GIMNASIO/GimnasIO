@@ -24,7 +24,7 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res, next) {
-    mongoDb.getExercises('adminGPS', 'gimnasIOapp', function (err, result) {
+    mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
         if(!err){
             res.status(200).send(result);
         }
@@ -101,9 +101,9 @@ router.get('/massive', function(req, res) {
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;
                     var tag = objeto.Tag;
-                    mongoDb.getExerciseByName('adminGPS', 'gimnasIOapp', name, function (err, result) {
+                    mongoDb.getExerciseByName(req.headers.u, req.headers.p, name, function (err, result) {
                         if (!result) {
-                            mongoDb.insertExercise('adminGPS', 'gimnasIOapp', name,muscle,description,image,tag, function (result) {
+                            mongoDb.insertExercise(req.headers.u, req.headers.p, name,muscle,description,image,tag, function (result) {
                                 if (result != 'OK') {
                                     ok = false;
                                 }
@@ -122,5 +122,12 @@ router.get('/massive', function(req, res) {
         });
 
 
+});
+
+router.get('/download', function(req, res){
+    var file = req.headers.image;
+    console.log(file);
+    var img = './data/images/' + file;
+    res.download(img); // Set disposition and send it.
 });
 module.exports = router;
