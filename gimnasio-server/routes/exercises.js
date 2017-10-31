@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
  * Name: /exercises/insertion
  * Description: Inserts a new exercise into database from json.
  * Request:
- *     -JSON object containing multiple exercise objects:
+ *     -Body: JSON exercise object
  *       -id: string
  *       -name: string
  *       -muscle: string
@@ -56,34 +56,37 @@ router.get('/', function(req, res, next) {
  */
 router.post('/insertion', function (req, res) {
     var ok = true;
-    var name = req.body.name;
-    var muscle = req.body.muscle;
-    var description = req.body.description;
-    var image = req.body.image;
-    var tag = req.body.tag;
-    var user = req.body.user;
-    var pwd = req.body.pwd;
-    console.log(user);
-    console.log(pwd);
-    mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
-        if (!result) {
-            mongoDb.insertExercise(user, pwd, name,muscle,description,image,tag, function (result) {
-                if (result != 'OK') {
-                    ok = false;
+
+    if (req.body.user && req.body.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
+        mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
+                var user = req.body.user;
+                var pwd = req.body.pwd;
+                var name = req.body.name;
+                var muscle = req.body.muscle;
+                var description = req.body.description;
+                var image = req.body.image;
+                var tag = req.body.tag;
+                mongoDb.getExerciseByName(name, function (err, result) {
+                    if (!result) {
+                        mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
+                            if (result !== 'OK') {
+                                ok = false;
+                            }
+                        });
+                    } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+                });
+                if (ok) {
+                    res.status(200).send('OK');
                 }
-            });
-        } else {
-            console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
-        }
-    });
-
-    if (ok) {
-        res.status(200).send('OK MORO');
+        });
     }
-
+    else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
 });
 
-router.get('/massive', function(req, res) {
+/**
+ * de momento se queda asi, pero habra que moverlo a otro metodo
+ */
+router.post('/massive', function(req, res) {
     // require csvtojson
     var csv = require("csvtojson");
 
@@ -93,7 +96,7 @@ router.get('/massive', function(req, res) {
         .fromFile('./data/files/ejercicios.csv')
         .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
             //console.log(jsonArrayObj);
-            if (jsonArrayObj != null) {
+            if (jsonArrayObj !== null) {
                 var n = 0;
                 jsonArrayObj.forEach( function (objeto) {
                     var name = objeto.Nombre;
@@ -104,7 +107,7 @@ router.get('/massive', function(req, res) {
                     mongoDb.getExerciseByName('adminGPS', 'gimnasIOapp', name, function (err, result) {
                         if (!result) {
                             mongoDb.insertExercise('adminGPS', 'gimnasIOapp', name,muscle,description,image,tag, function (result) {
-                                if (result != 'OK') {
+                                if (result !== 'OK') {
                                     ok = false;
                                 }
                             });
@@ -115,12 +118,10 @@ router.get('/massive', function(req, res) {
 
                 });
                 if (ok) {
-                    res.status(200).send('OK MORO');
+                    res.status(200).send('OK');
                 }
 
             }
         });
-
-
 });
 module.exports = router;
