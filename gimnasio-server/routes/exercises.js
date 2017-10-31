@@ -108,6 +108,8 @@ router.post('/massive', function(req, res) {
                         if (!result) {
                             mongoDb.insertExercise(req.body.user, req.body.pwd, name,muscle,description,image,tag, function (result) {
                                 if (result !== 'OK') {
+                                    ok = false;
+                                }
                             });
                         } else {
                             console.log('Exercise with name ' + name + ' found, maybe u wanna try to fuck my mongo?');
@@ -121,14 +123,17 @@ router.post('/massive', function(req, res) {
 
             }
         });
-
-
 });
 
 router.get('/download', function(req, res){
+    var fileExtension = require('file-extension');
     var file = req.headers.image;
-    console.log(file);
-    var img = './data/images/' + file;
-    res.download(img); // Set disposition and send it.
+    var ext = fileExtension(file);
+    if (ext == '.gif' || ext =='.png' || ext == '.jpg') {
+        var img = './data/images/' + file;
+        res.download(img); // Set disposition and send it.
+    } else {
+        res.status(403).send('Not permitted');
+    }
 });
 module.exports = router;
