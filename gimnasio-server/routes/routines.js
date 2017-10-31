@@ -24,11 +24,11 @@ var mongoDb = require('../database/mongo');
  *      500:
  *          -A feedback message
  */
-router.get('/', function(req, res,) {
+router.get('/', function(req, res, next) {
     var userKey = 0;
     var coachKey = 0;
     if(req.headers.nameGym !== null && req.headers.key !== null){
-        mongoDb.getUserKey(req.headers.namegym, function(err, result){
+        mongoDb.getUserKey(req.headers.nameGym, function(err, result){
             if(!err){
                 userKey = result;
             }
@@ -38,12 +38,12 @@ router.get('/', function(req, res,) {
             }
         });
 
-        mongoDb.getCoachKey(req.headers.namegym, function (err, result){
+        mongoDb.getCoachKey(req.headers.nameGym, function (err, result){
             if(!err){
                 coachKey = result;
                 // If given key is a valid user or coach key for that gym
                 if(req.headers.key === userKey || req.headers.key === coachKey){
-                    mongoDb.getRoutinesOfAGym(req.headers.namegym, function (err, result) {
+                    mongoDb.getRoutinesOfAGym(req.headers.nameGym, function (err, result) {
                         if(!err){
                             res.status(200).send(result);
                         }
