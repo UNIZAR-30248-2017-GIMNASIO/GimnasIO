@@ -21,31 +21,26 @@ var mongoDb = require('../database/mongo');
  *      500:
  *          -A feedback message
  */
-router.post('/newGym', function(req, res, next) {
-    console.log(req);
+router.post('/newGym', function(req, res) {
     var user = req.body.user;
     var pwd = req.body.pwd;
-    mongoDb.insertNewGym(user, pwd, req.body.nameGym);
-    var coachKey = 0;
-    var userKey = 0;
-    mongoDb.getCoachKey(user, pwd, req.body.nameGym, function (err, result) {
-        if(!err){
-            coachKey = result;
-        }
-        else res.status(404).send('Error procesando la operación.');
-    });
-    mongoDb.getUserKey(user, pwd, req.body.nameGym, function (err, result) {
-        if(!err){
-            userKey = result;
-            //Sending the response
-            res.status(200).send({
-                "userKey": userKey,
-                "coachKey": coachKey
-            })
-        }
-        else res.status(404).send('Error procesando la operacion.');
-    });
-
+    if(!req.body.nameGym || !req.body.user || !req.body.pwd){
+        res.status(404).send('Parámetros incompletos.');
+        return 0;
+    }
+    else{
+        mongoDb.insertNewGym(user, pwd, req.body.nameGym, function(err, userKey, coachKey){
+            if(err === null){
+                res.status(200).send({
+                    "userKey": userKey,
+                    "coachKey": coachKey
+                })
+            }
+            else{
+                res.status(404).send(err);
+            }
+        });
+    }
 });
 
 /**
@@ -56,6 +51,12 @@ router.post('/newGym', function(req, res, next) {
  *      -user: string
  *      -pwd: string
  *      -nameGym: string
+ *      -name: string
+ *      -objective: string
+ *      -series: string
+ *      -rep: int
+ *      -relaxTime: int
+ *      -exercises: [string]
  * Responses:
  *      200:
  *          -A feedback message
@@ -64,13 +65,17 @@ router.post('/newGym', function(req, res, next) {
  *      500:
  *          -A feedback message
  */
-router.post('/newRoutine', function(req, res, next) {
-    var user = req.body.user;
-    var pwd = req.body.pwd;
-    mongoDb.insertRoutine(user, pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep,
-        req.body.relaxTime, req.body.exercises);
-    //TODO comprobar si la insercion es correcta.
-    res.status(200).send("Insercion correcta");
+router.post('/newRoutine', function(req, res) {
+    if(req.body.user && req.body.pwd && req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){
+        mongoDb.insertRoutine(req.body.user, req.body.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
+            function(err){
+            if(err === 'OK'){
+                res.status(200).send("Inserción correcta.");
+            }
+            else res.status(404).send("Error de inserción. Comprueba los parametros.");
+        });
+    }
+    else res.status(404).send("Cuerpo de la petición vacío o incompleto.");
 });
 
 module.exports = router;
