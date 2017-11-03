@@ -23,7 +23,7 @@ var mongoDb = require('../database/mongo');
  *      500:
  *          -A feedback message
  */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
         if(!err){
             res.status(200).send(result);
@@ -66,18 +66,13 @@ router.post('/insertion', function (req, res) {
                 var description = req.body.description;
                 var image = req.body.image;
                 var tag = req.body.tag;
-                mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
-                    if (!result) {
-                        mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
-                            if (result !== 'OK') {
-                                ok = false;
-                            }
-                        });
-                    } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
-                });
-                if (ok) {
-                    res.status(200).send('OK');
-                }
+                if (!result) {
+                    mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
+                        if (result !== 'OK') {
+                            ok = false;
+                        }
+                    });
+                } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
         });
     }
     else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
@@ -97,7 +92,6 @@ router.post('/massive', function(req, res) {
         .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
             //console.log(jsonArrayObj);
             if (jsonArrayObj !== null) {
-                var n = 0;
                 jsonArrayObj.forEach( function (objeto) {
                     var name = objeto.Nombre;
                     var muscle = objeto.Musculos;
@@ -129,7 +123,7 @@ router.get('/download', function(req, res){
     var fileExtension = require('file-extension');
     var file = req.headers.image;
     var ext = fileExtension(file);
-    if (ext == '.gif' || ext =='.png' || ext == '.jpg') {
+    if (ext === '.gif' || ext ==='.png' || ext === '.jpg') {
         var img = './data/images/' + file;
         res.download(img); // Set disposition and send it.
     } else {

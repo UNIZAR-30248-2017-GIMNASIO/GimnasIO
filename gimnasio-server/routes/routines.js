@@ -24,7 +24,7 @@ var mongoDb = require('../database/mongo');
  *      500:
  *          -A feedback message
  */
-router.get('/', function(req, res, next) {
+router.get('/', function(req, res) {
     var userKey = 0;
     var coachKey = 0;
     if(req.headers.nameGym !== null && req.headers.key !== null){
