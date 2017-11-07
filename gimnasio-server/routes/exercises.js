@@ -24,12 +24,16 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res) {
-    mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
-        if(!err){
-            res.status(200).send(result);
-        }
-        else res.status(404).send('Empty database. Please contact an administrator.');
-    })
+    if(req.headers.u && req.headers.p){
+        mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
+            if(!err){
+                res.status(200).send(result);
+            }
+            else res.status(404).send('Empty database. Please contact an administrator.');
+        })
+    }
+    else res.status(404).send("Cuerpo de la peticion vacío o incorrecto.");
+
 });
 
 /**
@@ -57,10 +61,10 @@ router.get('/', function(req, res) {
 router.post('/insertion', function (req, res) {
     var ok = true;
 
-    if (req.body.user && req.body.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
+    if (req.headers.user && req.headers.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
+        var user = req.body.user;
+        var pwd = req.body.pwd;
         mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
-                var user = req.body.user;
-                var pwd = req.body.pwd;
                 var name = req.body.name;
                 var muscle = req.body.muscle;
                 var description = req.body.description;

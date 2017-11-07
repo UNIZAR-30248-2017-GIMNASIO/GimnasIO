@@ -3,4 +3,5 @@ node_js:
  - 6.9.5
 services: mongodb
 install:
-  - npm install ./gimnasio-server
+  - cd ./gimnasio-server
+  - npm install
