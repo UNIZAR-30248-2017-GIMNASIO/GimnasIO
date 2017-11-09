@@ -7,6 +7,9 @@ var mongoDb = require('../database/mongo');
  * Name: gym/newGym
  * Description: Inserts a new Gym in the database and returns its keys.
  * Request:
+ *     -Headers: Credentials
+ *       -user: string 
+ *       -pwd: string
  *      Body:
  *          -user: string
  *          -pwd: string
@@ -22,9 +25,9 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.post('/newGym', function(req, res) {
-    var user = req.body.user;
-    var pwd = req.body.pwd;
-    if(!req.body.nameGym || !req.body.user || !req.body.pwd){
+    var user = req.headers.user;
+    var pwd = req.headers.pwd;
+    if(!req.body.nameGym || !req.headers.user || !req.headers.pwd){
         res.status(404).send('Parámetros incompletos.');
         return 0;
     }
@@ -48,6 +51,10 @@ router.post('/newGym', function(req, res) {
  * Name: gym/newRoutine
  * Description: Inserts a new Routine in a specified Gym collection.
  * Request:
+ *     -Headers: Credentials
+ *       -user: string
+ *       -pwd: string
+ *     -Body: A JSON routine object
  *      -user: string
  *      -pwd: string
  *      -nameGym: string
@@ -66,8 +73,8 @@ router.post('/newGym', function(req, res) {
  *          -A feedback message
  */
 router.post('/newRoutine', function(req, res) {
-    if(req.body.user && req.body.pwd && req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){
-        mongoDb.insertRoutine(req.body.user, req.body.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
+    if(req.headers.user && req.headers.pwd && req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){
+        mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
             function(err){
             if(err === 'OK'){
                 res.status(200).send("Inserción correcta.");

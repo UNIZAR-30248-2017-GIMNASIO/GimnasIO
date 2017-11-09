@@ -8,7 +8,10 @@ var mongoDb = require('../database/mongo');
  * Type: GET
  * Name: /exercises/
  * Description: Returns a JSON containing every exercise on the Database.
- * Request: -
+ * Request:
+ *     -Headers: Credentials
+ *       -user: string
+ *       -pwd: string
  * Responses:
  *      200:
  *          -JSON object containing multiple exercise objects:
@@ -24,9 +27,11 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res) {
-    if(req.headers.u && req.headers.p){
-        mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
+    console.log(req.headers);
+    if(req.headers.user && req.headers.pwd){
+        mongoDb.getExercises(req.headers.user, req.headers.pwd, function (err, result) {
             if(!err){
+                console.log("sending " + result);
                 res.status(200).send(result);
             }
             else res.status(404).send('Empty database. Please contact an administrator.');
@@ -41,6 +46,9 @@ router.get('/', function(req, res) {
  * Name: /exercises/insertion
  * Description: Inserts a new exercise into database from json.
  * Request:
+ *     -Headers: Credentials
+ *       -user: string
+ *       -pwd: string
  *     -Body: JSON exercise object
  *       -id: string
  *       -name: string
@@ -62,8 +70,8 @@ router.post('/insertion', function (req, res) {
     var ok = true;
 
     if (req.headers.user && req.headers.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
-        var user = req.body.user;
-        var pwd = req.body.pwd;
+        var user = req.headers.user;
+        var pwd = req.headers.pwd;
         mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
                 var name = req.body.name;
                 var muscle = req.body.muscle;
@@ -102,9 +110,9 @@ router.post('/massive', function(req, res) {
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;
                     var tag = objeto.Tag;
-                    mongoDb.getExerciseByName(req.body.user, req.body.pwd, name, function (err, result) {
+                    mongoDb.getExerciseByName(req.headers.user, req.headers.pwd, name, function (err, result) {
                         if (!result) {
-                            mongoDb.insertExercise(req.body.user, req.body.pwd, name,muscle,description,image,tag, function (result) {
+                            mongoDb.insertExercise(req.headers.user, req.headers.pwd, name,muscle,description,image,tag, function (result) {
                                 if (result !== 'OK') {
                                     ok = false;
                                 }
