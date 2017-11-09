@@ -28,7 +28,10 @@ router.post('/newGym', function(req, res) {
     var user = req.headers.user;
     var pwd = req.headers.pwd;
     if(!req.body.nameGym || !req.headers.user || !req.headers.pwd){
-        res.status(404).send('Parámetros incompletos.');
+        res.status(404).send({
+            'success': false,
+            'message': 'Parámetros incompletos.'
+        });
         return 0;
     }
     else{
@@ -40,7 +43,10 @@ router.post('/newGym', function(req, res) {
                 })
             }
             else{
-                res.status(404).send(err);
+                res.status(404).send({
+                    'success': false,
+                    'message': err
+                });
             }
         });
     }
@@ -77,12 +83,21 @@ router.post('/newRoutine', function(req, res) {
         mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
             function(err){
             if(err === 'OK'){
-                res.status(200).send("Inserción correcta.");
+                res.status(200).send({
+                    'success': true,
+                    'message': "Inserción correcta."
+                });
             }
-            else res.status(404).send("Error de inserción. Comprueba los parametros.");
+            else res.status(404).send({
+                'success': false,
+                'message': "Error de inserción. Comprueba los parametros."
+            })
         });
     }
-    else res.status(404).send("Cuerpo de la petición vacío o incompleto.");
+    else res.status(404).send({
+        'success': false,
+        'message': "Cuerpo de la petición vacío o incompleto."
+    });
 });
 
 module.exports = router;

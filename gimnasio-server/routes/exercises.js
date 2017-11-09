@@ -31,13 +31,23 @@ router.get('/', function(req, res) {
     if(req.headers.user && req.headers.pwd){
         mongoDb.getExercises(req.headers.user, req.headers.pwd, function (err, result) {
             if(!err){
-                console.log("sending " + result);
-                res.status(200).send(result);
+                var jsonres = {};
+                for(var i=0; i < result.length; i++) {
+                    jsonres[i] = result[i];
+                }
+                console.log("name:" + jsonres[0].name);
+                res.status(200).json(jsonres);
             }
-            else res.status(404).send('Empty database. Please contact an administrator.');
+            else res.status(404).send({
+                'success': false,
+                'message': 'Empty database. Please contact an administrator.'
+            });
         })
     }
-    else res.status(404).send("Cuerpo de la peticion vacío o incorrecto.");
+    else res.status(404).send({
+        'success': false,
+        'message': "Cabecera de la peticion vacía o incorrecta."
+    });
 
 });
 
@@ -82,12 +92,23 @@ router.post('/insertion', function (req, res) {
                     mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
                         if (result !== 'OK') {
                             ok = false;
+                            res.status(500).send({
+                                'success': false,
+                                'message': "Error de inserción. Inténtalo más tarde o informa al administrador."
+                            })
                         }
+                        else res.status(200).send(result);
                     });
-                } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+                } else res.status(404).send({
+                    'success': false,
+                    'message': "El ejercicio ya se encuentra en la Base de Datos"
+                });
         });
     }
-    else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
+    else res.status(404).send({
+        'success': false,
+        'message': "Cuerpo de la petición vacío o incompleto."
+    })
 });
 
 /**
@@ -139,7 +160,11 @@ router.get('/download', function(req, res){
         var img = './data/images/' + file;
         res.download(img); // Set disposition and send it.
     } else {
-        res.status(403).send('Not permitted');
+        res.status(403).send({
+            'success': false,
+            'message': 'Not permitted'
+        });
     }
 });
+
 module.exports = router;
