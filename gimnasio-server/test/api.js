@@ -77,6 +77,16 @@ describe('Exercises', function() {
 });
 //TODO: not passing yet
 describe('Routines', function() {
+
+    /*
+     * Insert an exercise
+     */
+    before(function(done) {
+        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, [], "", function (err, res) {
+            done();
+        });
+    });
+
     describe('GET routines', function() {
         it('it should GET all the routines', function(done) {
             chai.request(server)
@@ -108,6 +118,15 @@ describe('Routines', function() {
                     done();
                 })
         })
-    })
+    });
+
+    /*
+     * Delete the previously inserted routine
+     */
+    after(function(done) {
+        mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(){
+            done();
+        })
+    });
 });
 

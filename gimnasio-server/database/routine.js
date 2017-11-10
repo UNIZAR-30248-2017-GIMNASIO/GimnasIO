@@ -28,5 +28,21 @@ function getRoutinesOfAGym (db, args) {
     });
 }
 
+function deleteRoutineByName (db, args) {
+    var collection = db.collection('routines');
+    var name = args[0];
+    var callback = args[1];
+
+    collection.deleteOne({name: name}, function(err, result){
+        if(!err) {
+            if(!result){
+                callback("Exercise not found", null);
+            }
+        }
+        return callback(err, result);
+    });
+}
+
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
+exports.deleteRoutineByName = deleteRoutineByName;

@@ -63,15 +63,15 @@ function getCoachKey (u, p, nameGym, callback) {
 
 //=======================================Routine tables===============================================================
 function insertRoutine(u, p, nameGym, name, objective, series, rep, relaxTime, exercises, callback){
-
     connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback], u, p);
-
 }
 
 function getRoutinesOfAGym(u, p, nameGym, callback){
-
     connect(routine.getRoutinesOfAGym,[nameGym, callback], u, p);
+}
 
+function deleteRoutineByName(u, p, name, callback){
+    connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
 
 exports.insertExercise = insertExercise;
@@ -83,3 +83,4 @@ exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
+exports.deleteRoutineByName = deleteRoutineByName;
