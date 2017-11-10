@@ -71,6 +71,23 @@ function getExercises(db, args){
 
 }
 
+function deleteExerciseByName(db, args){
+
+    var collection = db.collection('exercises');
+
+    var name = args[0];
+    var callback = args[1];
+
+    collection.deleteOne({name: name}, function(err, result) {
+        if(!err) {
+            if(!result){
+                callback("Exercise not found", null);
+            }
+        }
+        return callback(err, result);
+    })
+}
+
 /**
 function deleteExerciseByName(name, callback) {
 
@@ -81,3 +98,4 @@ function deleteExerciseByName(name, callback) {
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
+exports.deleteExerciseByName = deleteExerciseByName;

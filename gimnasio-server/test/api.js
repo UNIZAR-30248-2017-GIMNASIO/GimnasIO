@@ -5,12 +5,22 @@ var server = require('../app');
 var should = chai.should();
 var expect = chai.expect;
 var assert = require('assert');
+var mongoDb = require('../database/mongo');
 
 chai.use(chaiHttp);
 chai.use(require('chai-json'));
 //Our parent block
 
 describe('Exercises', function() {
+    /*
+     * Insert an exercise
+     */
+    before(function(done) {
+        mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", "https://i.vimeocdn.com/portrait/58832_300x300", "autotest", function (err, res) {
+            done();
+        });
+    });
+
     describe('GET exercises', function() {
         it('should GET all the exercises', function(done) {
             chai.request(server)
@@ -53,7 +63,17 @@ describe('Exercises', function() {
                     done();
                 })
         });
-    })
+    });
+
+    /*
+     * Delete the previously inserted exercise
+     */
+    after(function(done) {
+        mongoDb.deleteExerciseByName("gpsAdmin", "Gps@1718", "autotest", function(){
+            done();
+        })
+    });
+
 });
 //TODO: not passing yet
 describe('Routines', function() {
@@ -90,3 +110,4 @@ describe('Routines', function() {
         })
     })
 });
+
