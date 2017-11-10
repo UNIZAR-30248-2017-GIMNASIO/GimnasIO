@@ -27,40 +27,60 @@ var mongoDb = require('../database/mongo');
 router.get('/', function(req, res) {
     var userKey = 0;
     var coachKey = 0;
-    if(req.headers.nameGym !== null && req.headers.key !== null){
-        mongoDb.getUserKey(req.headers.nameGym, function(err, result){
+    console.log(req.headers);
+    if(req.headers.user && req.headers.pwd && req.headers.namegym && req.headers.key){
+        mongoDb.getUserKey(req.headers.user, req.headers.pwd, req.headers.namegym, function(err, result){
             if(!err){
                 userKey = result;
             }
             else{ //Error means the gym is not on the database, therefore we cannot continue.
-                res.status(404).send('Gimnasio no registrado.');
+                res.status(404).send({
+                    'success': false,
+                    'message': 'Gimnasio no registrado.'
+                });
                 return 0;
             }
         });
 
-        mongoDb.getCoachKey(req.headers.nameGym, function (err, result){
+        mongoDb.getCoachKey(req.headers.user, req.headers.pwd, req.headers.namegym, function (err, result){
             if(!err){
                 coachKey = result;
                 // If given key is a valid user or coach key for that gym
                 if(req.headers.key === userKey || req.headers.key === coachKey){
-                    mongoDb.getRoutinesOfAGym(req.headers.nameGym, function (err, result) {
+                    mongoDb.getRoutinesOfAGym(req.headers.user, req.headers.pwd, req.headers.namegym, function (err, result) {
                         if(!err){
-                            res.status(200).send(result);
+                            var jsonres = {};
+                            for(var i=0; i < result.length; i++) {
+                                jsonres[i] = result[i];
+                            }
+                            res.status(200).send(jsonres);
                         }
-                        else res.status(404).send(err);
+                        else res.status(404).send({
+                            'success': false,
+                            'message': err
+                        });
                     })
                 }
                 else{
-                    res.status(404).send('Nombre o clave incorrecta');
+                    res.status(404).send({
+                        'success': false,
+                        'message': 'Nombre o clave incorrecta'
+                    });
                 }
             }
             else{ //Error means the gym is not on the database, therefore we cannot continue.
-                res.status(404).send('Gimnasio no registrado.');
+                res.status(404).send({
+                    'success': false,
+                    'message': 'Gimnasio no registrado.'
+                });
                 return 0;
             }
         });
     }
-    else res.status(404).send('Cabeceras de la petición vacía o incompleta.')
+    else res.status(404).send({
+        'success': false,
+        'message': 'Cabecera de la petición vacía o incompleta.'
+    })
 });
 
 module.exports = router;

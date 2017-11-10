@@ -1,4 +1,4 @@
-function insertExercise(db,args){
+function insertExercise(db,args) {
     var collection = db.collection('exercises');
     var callback = args[5];
 
@@ -7,19 +7,22 @@ function insertExercise(db,args){
     var fs = require('fs');
     var fileExtension = require('file-extension');
     var request = require('request');
-    var download = function(uri, filename, callback){
-        request.head(uri, function(err, res, body){
-            //console.log('content-type:', res.headers['content-type']);
-            //console.log('content-length:', res.headers['content-length']);
+    var destiny = "";
+    if (imageURL !== "") {
+        var download = function (uri, filename, callback) {
+            request.head(uri, function (err, res, body) {
+                //console.log('content-type:', res.headers['content-type']);
+                //console.log('content-length:', res.headers['content-length']);
 
-            request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+                request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+            });
+        };
+        var ext = fileExtension(args[3]);
+        destiny = './data/images/' + args[0] + '.' + ext;
+        download(imageURL, destiny, function () {
+            //console.log('done');
         });
-    };
-    var ext = fileExtension(args[3]);
-    var destiny = './data/images/' + args[0] + '.' + ext;
-    download(imageURL, destiny, function(){
-        //console.log('done');
-    });
+    }
     //Insert a new exercise
     collection.insert([{ name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
         function (err) {
@@ -71,6 +74,23 @@ function getExercises(db, args){
 
 }
 
+function deleteExerciseByName(db, args){
+
+    var collection = db.collection('exercises');
+
+    var name = args[0];
+    var callback = args[1];
+
+    collection.deleteOne({name: name}, function(err, result) {
+        if(!err) {
+            if(!result){
+                callback("Exercise not found", null);
+            }
+        }
+        return callback(err, result);
+    })
+}
+
 /**
 function deleteExerciseByName(name, callback) {
 
@@ -81,3 +101,4 @@ function deleteExerciseByName(name, callback) {
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
+exports.deleteExerciseByName = deleteExerciseByName;

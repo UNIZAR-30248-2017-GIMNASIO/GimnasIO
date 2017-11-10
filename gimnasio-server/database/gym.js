@@ -58,6 +58,27 @@ function getCoachKey (db, args) {
     });
 }
 
+function deleteGymByName (db, args) {
+    var collection = db.collection('gyms');
+
+    var nameGym = args[0];
+    var callback = args[1];
+
+    collection.deleteOne({nameGym: nameGym}, function (err, result) {
+        var res = "";
+        var error = "";
+        if (!err) {
+            res = "Deleted correctly";
+            error = null;
+        }
+        else{
+            error = err;
+            res = null;
+        }
+        return callback(error, res);
+    })
+}
+
 function hash(string) {
     var sh = require("shorthash");
     var id = sh.unique(string);
@@ -69,3 +90,4 @@ function hash(string) {
 exports.insertNewGym=insertNewGym;
 exports.getUserKey=getUserKey;
 exports.getCoachKey=getCoachKey;
+exports.deleteGymByName=deleteGymByName;

@@ -8,7 +8,10 @@ var mongoDb = require('../database/mongo');
  * Type: GET
  * Name: /exercises/
  * Description: Returns a JSON containing every exercise on the Database.
- * Request: -
+ * Request:
+ *     -Headers: Credentials
+ *       -user: string
+ *       -pwd: string
  * Responses:
  *      200:
  *          -JSON object containing multiple exercise objects:
@@ -24,15 +27,26 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res) {
-    if(req.headers.u && req.headers.p){
-        mongoDb.getExercises(req.headers.u, req.headers.p, function (err, result) {
+    console.log(req.headers);
+    if(req.headers.user && req.headers.pwd){
+        mongoDb.getExercises(req.headers.user, req.headers.pwd, function (err, result) {
             if(!err){
-                res.status(200).send(result);
+                var jsonres = {};
+                for(var i=0; i < result.length; i++) {
+                    jsonres[i] = result[i];
+                }
+                res.status(200).json(jsonres);
             }
-            else res.status(404).send('Empty database. Please contact an administrator.');
+            else res.status(404).send({
+                'success': false,
+                'message': 'Empty database. Please contact an administrator.'
+            });
         })
     }
-    else res.status(404).send("Cuerpo de la peticion vacío o incorrecto.");
+    else res.status(404).send({
+        'success': false,
+        'message': "Cabecera de la peticion vacía o incorrecta."
+    });
 
 });
 
@@ -41,6 +55,9 @@ router.get('/', function(req, res) {
  * Name: /exercises/insertion
  * Description: Inserts a new exercise into database from json.
  * Request:
+ *     -Headers: Credentials
+ *       -user: string
+ *       -pwd: string
  *     -Body: JSON exercise object
  *       -id: string
  *       -name: string
@@ -62,8 +79,8 @@ router.post('/insertion', function (req, res) {
     var ok = true;
 
     if (req.headers.user && req.headers.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
-        var user = req.body.user;
-        var pwd = req.body.pwd;
+        var user = req.headers.user;
+        var pwd = req.headers.pwd;
         mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
                 var name = req.body.name;
                 var muscle = req.body.muscle;
@@ -74,6 +91,10 @@ router.post('/insertion', function (req, res) {
                     mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
                         if (result !== 'OK') {
                             ok = false;
+                            res.status(500).send({
+                                'success': false,
+                                'message': "Error de inserción. Inténtalo más tarde o informa al administrador."
+                            })
                         } else {
                             mongoDb.getLastUpdate(user, pwd, function (result) {
                                if (!result) {
@@ -86,12 +107,19 @@ router.post('/insertion', function (req, res) {
                                    });
                                }
                             });
+                            res.status(200).send(result);
                         }
                     });
-                } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
+                } else res.status(404).send({
+                    'success': false,
+                    'message': "El ejercicio ya se encuentra en la Base de Datos"
+                });
         });
     }
-    else res.status(404).send("Cuerpo de la petición vacío o incompleto.")
+    else res.status(404).send({
+        'success': false,
+        'message': "Cuerpo de la petición vacío o incompleto."
+    })
 });
 
 /**
@@ -114,9 +142,9 @@ router.post('/massive', function(req, res) {
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;
                     var tag = objeto.Tag;
-                    mongoDb.getExerciseByName(req.body.user, req.body.pwd, name, function (err, result) {
+                    mongoDb.getExerciseByName(req.headers.user, req.headers.pwd, name, function (err, result) {
                         if (!result) {
-                            mongoDb.insertExercise(req.body.user, req.body.pwd, name,muscle,description,image,tag, function (result) {
+                            mongoDb.insertExercise(req.headers.user, req.headers.pwd, name,muscle,description,image,tag, function (result) {
                                 if (result !== 'OK') {
                                     ok = false;
                                 }
@@ -154,7 +182,11 @@ router.get('/download', function(req, res){
         var img = './data/images/' + file;
         res.download(img); // Set disposition and send it.
     } else {
-        res.status(403).send('Not permitted');
+        res.status(403).send({
+            'success': false,
+            'message': 'Not permitted'
+        });
     }
 });
+
 module.exports = router;
