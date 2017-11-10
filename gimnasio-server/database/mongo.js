@@ -71,8 +71,9 @@ function insertRoutine(u, p, nameGym, name, objective, series, rep, relaxTime, e
     connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback], u, p);
 }
 
-function getRoutinesOfAGym(u, p, nameGym, callback){
-    connect(routine.getRoutinesOfAGym,[nameGym, callback], u, p);
+function getRoutinesOfAGym(u, p, nameGym, callback) {
+    connect(routine.getRoutinesOfAGym, [nameGym, callback], u, p);
+}
 function deleteRoutineByName(u, p, name, callback){
     connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
