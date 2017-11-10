@@ -95,8 +95,20 @@ router.post('/insertion', function (req, res) {
                                 'success': false,
                                 'message': "Error de inserción. Inténtalo más tarde o informa al administrador."
                             })
+                        } else {
+                            mongoDb.getLastUpdate(user, pwd, function (result) {
+                               if (!result) {
+                                   mongoDb.insertlastUpdate(user,pwd, function (res) {
+                                       console.log("Inserted lastUpdate");
+                                   });
+                               } else {
+                                   mongoDb.updateLastUpdate(user,pwd,res.body.lastUpdate, function (res) {
+                                       console.log("Updated lastUpdate");
+                                   });
+                               }
+                            });
+                            res.status(200).send(result);
                         }
-                        else res.status(200).send(result);
                     });
                 } else res.status(404).send({
                     'success': false,
@@ -144,6 +156,17 @@ router.post('/massive', function(req, res) {
 
                 });
                 if (ok) {
+                    mongoDb.getLastUpdate(req.body.user, req.body.pwd, function (result) {
+                        if (!result) {
+                            mongoDb.insertlastUpdate(req.body.user,req.body.pwd, function (res) {
+                                console.log("Inserted lastUpdate");
+                            });
+                        } else {
+                            mongoDb.updateLastUpdate(req.body.user,req.body.pwd,res.body.lastUpdate, function (res) {
+                                console.log("Updated lastUpdate");
+                            });
+                        }
+                    });
                     res.status(200).send('OK');
                 }
 
