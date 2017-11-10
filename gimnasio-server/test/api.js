@@ -78,13 +78,18 @@ describe('Exercises', function() {
 //TODO: not passing yet
 describe('Routines', function() {
 
+    var key = "";
     /*
-     * Insert an exercise
+     * Insert a gym and a routine
      */
     before(function(done) {
         mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, [], "", function (err, res) {
-            done();
+            mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
+                key = key1;
+                done();
+            })
         });
+
     });
 
     describe('GET routines', function() {
@@ -93,8 +98,8 @@ describe('Routines', function() {
                 .get('/routines')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
-                .set('key', '2sYigK')
-                .set('nameGym', 'test')
+                .set('key', key)
+                .set('nameGym', 'autotest')
                 .set('Content-Type', 'application/json')
                 .end(function(err, res) {
                     res.should.have.status(200);
@@ -121,12 +126,15 @@ describe('Routines', function() {
     });
 
     /*
-     * Delete the previously inserted routine
+     * Delete the previously inserted routine and gym
      */
     after(function(done) {
         mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(){
-            done();
-        })
+            mongoDb.deleteGymByName("gpsAdmin", "Gps@1718", "autotest", function(){
+                done();
+            });
+        });
+
     });
 });
 

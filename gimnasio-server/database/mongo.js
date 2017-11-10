@@ -61,6 +61,10 @@ function getCoachKey (u, p, nameGym, callback) {
     connect(gym.getCoachKey, [nameGym, callback], u, p);
 }
 
+function deleteGymByName (u, p, nameGym, callback) {
+    connect(gym.deleteGymByName, [nameGym, callback], u, p);
+}
+
 //=======================================Routine tables===============================================================
 function insertRoutine(u, p, nameGym, name, objective, series, rep, relaxTime, exercises, callback){
     connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback], u, p);
@@ -81,6 +85,7 @@ exports.deleteExerciseByName = deleteExerciseByName;
 exports.insertNewGym=insertNewGym;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
+exports.deleteGymByName = deleteGymByName;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
 exports.deleteRoutineByName = deleteRoutineByName;
