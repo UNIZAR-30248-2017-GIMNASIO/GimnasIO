@@ -5,10 +5,11 @@ var router = express.Router();
 var mongoDb = require('../database/mongo');
 
 router.get('/', function(req, res) {
-    if(req.headers.u && req.headers.p){
-        mongoDb.getLastUpdate(req.headers.u, req.headers.p, function (err, result) {
+    if(req.headers.user && req.headers.pwd){
+        mongoDb.getLastUpdate(req.headers.user, req.headers.pwd, function (err, result) {
             if(!err){
-                res.status(200).send(result);
+                var response = {lastUpdate: result[0].lastupdate};
+                res.status(200).send(response);
             }
             else res.status(404).send('Empty database. Please contact an administrator.');
         })
