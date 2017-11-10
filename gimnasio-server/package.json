@@ -7,8 +7,11 @@
     "test": "mocha --timeout 10000"
   },
   "dependencies": {
+    "@types/chai": "^4.0.4",
     "body-parser": "~1.18.2",
+    "chai-json": "^0.1.1",
     "cookie-parser": "~1.4.3",
+    "csvtojson": "^1.1.9",
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "express-fileupload": "^0.3.0",

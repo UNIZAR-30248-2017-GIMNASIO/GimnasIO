@@ -44,6 +44,9 @@ function getExercises(u, p, callback){
     connect(exercise.getExercises,[callback], u, p);
 
 }
+function deleteExerciseByName(u, p, name, callback){
+    connect(exercise.deleteExerciseByName, [name, callback], u, p);
+}
 
 //=======================================Gym tables===============================================================
 function insertNewGym (u, p, nameGym, callback) {
@@ -58,24 +61,31 @@ function getCoachKey (u, p, nameGym, callback) {
     connect(gym.getCoachKey, [nameGym, callback], u, p);
 }
 
+function deleteGymByName (u, p, nameGym, callback) {
+    connect(gym.deleteGymByName, [nameGym, callback], u, p);
+}
+
 //=======================================Routine tables===============================================================
 function insertRoutine(u, p, nameGym, name, objective, series, rep, relaxTime, exercises, callback){
-
     connect(routine.insertRoutine, [nameGym, name, objective, series, rep, relaxTime, exercises, callback], u, p);
-
 }
 
 function getRoutinesOfAGym(u, p, nameGym, callback){
-
     connect(routine.getRoutinesOfAGym,[nameGym, callback], u, p);
+}
 
+function deleteRoutineByName(u, p, name, callback){
+    connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
 
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
+exports.deleteExerciseByName = deleteExerciseByName;
 exports.insertNewGym=insertNewGym;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
+exports.deleteGymByName = deleteGymByName;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
+exports.deleteRoutineByName = deleteRoutineByName;
