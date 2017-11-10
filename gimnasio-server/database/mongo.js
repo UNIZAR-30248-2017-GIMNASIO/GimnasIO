@@ -3,6 +3,7 @@ var MongoClient = require('mongodb').MongoClient;
 var exercise = require('./exercise');
 var routine = require('./routine');
 var gym = require('./gym');
+var update = require('./update');
 
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
@@ -71,6 +72,18 @@ function getRoutinesOfAGym(u, p, nameGym, callback){
 
 }
 
+function insertlastUpdate(u,p,callback){
+    connect(update.insertlastUpdate, [callback],u,p);
+}
+
+function updateLastUpdate(u,p, lastUpdate, callback) {
+    connect(update.updateLastUpdate, [lastUpdate, callback],u,p);
+}
+
+function getLastUpdate(u,p,callback) {
+    connect(update.getLastUpdate, [callback], u, p);
+}
+
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
@@ -79,3 +92,6 @@ exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
+exports.insertlastUpdate = insertlastUpdate;
+exports.updateLastUpdate = updateLastUpdate;
+exports.getLastUpdate = getLastUpdate;

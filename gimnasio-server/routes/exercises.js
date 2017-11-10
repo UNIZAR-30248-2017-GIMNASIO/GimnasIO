@@ -74,6 +74,18 @@ router.post('/insertion', function (req, res) {
                     mongoDb.insertExercise(user, pwd, name, muscle, description, image, tag, function (result) {
                         if (result !== 'OK') {
                             ok = false;
+                        } else {
+                            mongoDb.getLastUpdate(user, pwd, function (result) {
+                               if (!result) {
+                                   mongoDb.insertlastUpdate(user,pwd, function (res) {
+                                       console.log("Inserted lastUpdate");
+                                   });
+                               } else {
+                                   mongoDb.updateLastUpdate(user,pwd,res.body.lastUpdate, function (res) {
+                                       console.log("Updated lastUpdate");
+                                   });
+                               }
+                            });
                         }
                     });
                 } else console.log('Exercise with name ' + name + ' found, maybe u are trying to fuck my mongo?');
@@ -116,6 +128,17 @@ router.post('/massive', function(req, res) {
 
                 });
                 if (ok) {
+                    mongoDb.getLastUpdate(req.body.user, req.body.pwd, function (result) {
+                        if (!result) {
+                            mongoDb.insertlastUpdate(req.body.user,req.body.pwd, function (res) {
+                                console.log("Inserted lastUpdate");
+                            });
+                        } else {
+                            mongoDb.updateLastUpdate(req.body.user,req.body.pwd,res.body.lastUpdate, function (res) {
+                                console.log("Updated lastUpdate");
+                            });
+                        }
+                    });
                     res.status(200).send('OK');
                 }
 
