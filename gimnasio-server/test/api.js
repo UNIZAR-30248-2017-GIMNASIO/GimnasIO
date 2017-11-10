@@ -16,7 +16,7 @@ describe('Exercises', function() {
      * Insert an exercise
      */
     before(function(done) {
-        mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", "https://i.vimeocdn.com/portrait/58832_300x300", "autotest", function (err, res) {
+        mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", "", "autotest", function (err, res) {
             done();
         });
     });
