@@ -85,7 +85,7 @@ describe('Routines', function() {
     before(function(done) {
         mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, [], "", function (err, res) {
             mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
-                key = key1;
+                key = key2;
                 done();
             })
         });
