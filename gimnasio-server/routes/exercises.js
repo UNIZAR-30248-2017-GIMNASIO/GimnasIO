@@ -35,7 +35,6 @@ router.get('/', function(req, res) {
                 for(var i=0; i < result.length; i++) {
                     jsonres[i] = result[i];
                 }
-                console.log("name:" + jsonres[0].name);
                 res.status(200).json(jsonres);
             }
             else res.status(404).send({
