@@ -178,15 +178,16 @@ router.get('/download', function(req, res){
     var fileExtension = require('file-extension');
     var file = req.headers.image;
     var ext = fileExtension(file);
-    if (ext === '.gif' || ext ==='.png' || ext === '.jpg') {
+    console.log(file);
+    //if (ext === '.gif' || ext ==='.png' || ext === '.jpg') {
         var img = './data/images/' + file;
         res.download(img); // Set disposition and send it.
-    } else {
+    /*} else {
         res.status(403).send({
             'success': false,
             'message': 'Not permitted'
         });
-    }
+    }*/
 });
 
 module.exports = router;
