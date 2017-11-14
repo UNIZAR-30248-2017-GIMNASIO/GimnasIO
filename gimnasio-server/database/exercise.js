@@ -24,7 +24,7 @@ function insertExercise(db,args) {
         });
     }
     //Insert a new exercise
-    collection.insert([{ name: args[0], muscle: args[1], description: args[2], images: destiny, tag: args[4]}],
+    collection.insert([{ name: args[0], muscle: args[1], description: args[2], tag: args[4]}],
         function (err) {
             if (err) {
                 console.log('An error ocurred.');

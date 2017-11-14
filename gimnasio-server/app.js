@@ -10,6 +10,7 @@ var users = require('./routes/users');
 var exercises = require('./routes/exercises');
 var routines = require('./routes/routines');
 var gym = require('./routes/gyms');
+var update = require('./routes/update');
 
 var app = express();
 
@@ -30,7 +31,7 @@ app.use('/users', users);
 app.use('/exercises', exercises);
 app.use('/routines', routines);
 app.use('/gym', gym);
-
+app.use('/update',update);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');

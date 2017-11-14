@@ -35,7 +35,6 @@ describe('Exercises', function() {
                     res.body[0].should.have.property('name');
                     res.body[0].should.have.property('muscle');
                     res.body[0].should.have.property('description');
-                    res.body[0].should.have.property('images');
                     res.body[0].should.have.property('tag');
                     done();
                 })
