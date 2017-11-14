@@ -7,20 +7,25 @@ var gym = require('./gym');
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
-function connect(callback, args, u, p) {
+function connect(operation, args, u, p) {
 
     MongoClient.connect(url, {
         auth: {
             user: u,
             password: p
         }
-    }, function (err,db) {
+    }, function (err, db) {
         if (err) {
             console.log(err);
-            return undefined;
+            console.log("length args: " + args.length);
+            console.log(args);
+            var l = args.length;
+            args[l-1]("Usuario o contraseña incorrectos.", null);
+            return 0;
         }
         else {
-            callback(db, args);
+            console.log("he llegado a llamar");
+            operation(db, args);
             return db;
 
         }

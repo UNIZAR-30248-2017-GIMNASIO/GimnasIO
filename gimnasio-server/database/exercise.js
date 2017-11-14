@@ -81,7 +81,7 @@ function deleteExerciseByName(db, args){
     var name = args[0];
     var callback = args[1];
 
-    collection.deleteOne({name: name}, function(err, result) {
+    collection.deleteMany({name: name}, function(err, result) {
         if(!err) {
             if(!result){
                 callback("Exercise not found", null);

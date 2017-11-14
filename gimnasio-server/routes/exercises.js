@@ -78,10 +78,10 @@ router.get('/', function(req, res) {
 router.post('/insertion', function (req, res) {
     var ok = true;
 
-    if (req.headers.user && req.headers.pwd && req.body.name && req.body.muscle && req.body.image && req.body.tag){
+    if (req.headers.user && req.headers.pwd && req.body.name && req.body.muscle && req.body.tag){
         var user = req.headers.user;
         var pwd = req.headers.pwd;
-        mongoDb.getExerciseByName(user, pwd, name, function (err, result) {
+        mongoDb.getExerciseByName(user, pwd, req.body.name, function (err, result) {
                 var name = req.body.name;
                 var muscle = req.body.muscle;
                 var description = req.body.description;

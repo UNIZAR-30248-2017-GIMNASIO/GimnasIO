@@ -1,7 +1,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
-var server = require('../app');
-//var server = "localhost:3000";
+//var server = require('../app');
+var server = "localhost:3000";
 var should = chai.should();
 var expect = chai.expect;
 var assert = require('assert');
@@ -54,15 +54,30 @@ describe('Exercises', function() {
         it('should return an error message when trying to GET with an incorrect user or password', function(done) {
             chai.request(server)
                 .get('/exercises')
-                //.set('user', 'error')
-                //.set('pwd', 'error')
+                .set('user', 'error')
+                .set('pwd', 'error')
                 .end(function(err, res) {
                     res.should.have.status(404);
-                    //res.body.success.should.equal(false);
-                    //res.body.message.should.equal('Cabecera de la peticion vacía o incorrecta.');
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
                     done();
                 })
         });
+    });
+    describe('POST an exercise', function() {
+        it('should post an exercise to the database', function(done) {
+            chai.request(server)
+                .post('/exercises/insertion')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('Content-Type', 'application/json')
+                .send({"name": "autotest", "muscle": "autotest", "description": "autotest", "image": "", "tag": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(200);
+                    res.body.should.equal('OK');
+                    done();
+                })
+        })
     });
 
     /*
@@ -75,6 +90,7 @@ describe('Exercises', function() {
     });
 
 });
+
 //TODO: not passing yet
 describe('Routines', function() {
 
