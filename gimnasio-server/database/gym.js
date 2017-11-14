@@ -38,7 +38,6 @@ function getUserKey (db, args) {
     collection.findOne({nameGym: nameGym}, function (err, result) {
        if (!err) {
            console.log('Found gym with name ' + nameGym);
-           console.log(result.userKey);
        }
        return callback(err, result.userKey);
     });
@@ -82,7 +81,6 @@ function deleteGymByName (db, args) {
 function hash(string) {
     var sh = require("shorthash");
     var id = sh.unique(string);
-    console.log(id);
     return id;
 
 }

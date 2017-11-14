@@ -63,22 +63,6 @@ describe('Exercises', function() {
                 })
         });
     });
-    describe('POST an exercise', function() {
-        it('should post an exercise to the database', function(done) {
-            chai.request(server)
-                .post('/exercises/insertion')
-                .set('user', 'gpsAdmin')
-                .set('pwd', 'Gps@1718')
-                .set('Content-Type', 'application/json')
-                .send({"name": "autotest", "muscle": "autotest", "description": "autotest", "image": "", "tag": "autotest"})
-                .end(function(err, res) {
-                    res.should.have.status(200);
-                    res.body.should.equal('OK');
-                    done();
-                })
-        })
-    });
-
     /*
      * Delete the previously inserted exercise
      */
@@ -104,7 +88,6 @@ describe('Routines', function() {
                 done();
             })
         });
-
     });
 
     describe('GET routines', function() {
@@ -124,15 +107,15 @@ describe('Routines', function() {
                     res.body[0].should.have.property('nameGym');
                     res.body[0].nameGym.should.be.a('string');
                     res.body[0].should.have.property('name');
-                    //res.body[0].name.should.be.a('string');
+                    res.body[0].name.should.be.a('string');
                     res.body[0].should.have.property('objective');
-                    //res.body[0].objective.should.be.a('string');
+                    res.body[0].objective.should.be.a('string');
                     res.body[0].should.have.property('series');
-                    //res.body[0].series.should.be.an('int');
+                    res.body[0].series.should.be.equal(1);
                     res.body[0].should.have.property('rep');
-                    //res.body[0].rep.should.be.an('int');
+                    res.body[0].rep.should.be.equal(1);
                     res.body[0].should.have.property('relaxTime');
-                    //res.body[0].relaxTime.should.be.a('double');
+                    //res.body[0].relaxTime.should.be.equal(1);
                     res.body[0].should.have.property('exercises');
                     //res.body[0].nameGym.should.be.an('array');
                     done();

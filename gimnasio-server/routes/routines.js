@@ -27,7 +27,6 @@ var mongoDb = require('../database/mongo');
 router.get('/', function(req, res) {
     var userKey = 0;
     var coachKey = 0;
-    console.log(req.headers);
     if(req.headers.user && req.headers.pwd && req.headers.namegym && req.headers.key){
         mongoDb.getUserKey(req.headers.user, req.headers.pwd, req.headers.namegym, function(err, result){
             if(!err){
@@ -53,6 +52,7 @@ router.get('/', function(req, res) {
                             for(var i=0; i < result.length; i++) {
                                 jsonres[i] = result[i];
                             }
+                            console.log("relaxtime:" + jsonres);
                             res.status(200).send(jsonres);
                         }
                         else res.status(404).send({

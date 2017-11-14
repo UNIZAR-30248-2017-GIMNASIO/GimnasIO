@@ -17,15 +17,11 @@ function connect(operation, args, u, p) {
         }
     }, function (err, db) {
         if (err) {
-            console.log(err);
-            console.log("length args: " + args.length);
-            console.log(args);
             var l = args.length;
             args[l-1]("Usuario o contraseña incorrectos.", null);
             return 0;
         }
         else {
-            console.log("he llegado a llamar");
             operation(db, args);
             return db;
 
