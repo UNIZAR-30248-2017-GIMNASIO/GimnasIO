@@ -97,7 +97,7 @@ function deleteExerciseByName(name, callback) {
 
 }**/
 
-//exports.insertExercise = insertExercise;
+exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
 exports.deleteExerciseByName = deleteExerciseByName;
