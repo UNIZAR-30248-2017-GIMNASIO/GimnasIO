@@ -53,17 +53,16 @@ describe('Exercises', function() {
         it('should return an error message when trying to GET with an incorrect user or password', function(done) {
             chai.request(server)
                 .get('/exercises')
-                //.set('user', 'error')
-                //.set('pwd', 'error')
+                .set('user', 'error')
+                .set('pwd', 'error')
                 .end(function(err, res) {
                     res.should.have.status(404);
-                    //res.body.success.should.equal(false);
-                    //res.body.message.should.equal('Cabecera de la peticion vacía o incorrecta.');
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
                     done();
                 })
         });
     });
-
     /*
      * Delete the previously inserted exercise
      */
@@ -74,6 +73,7 @@ describe('Exercises', function() {
     });
 
 });
+
 //TODO: not passing yet
 describe('Routines', function() {
 
@@ -88,7 +88,6 @@ describe('Routines', function() {
                 done();
             })
         });
-
     });
 
     describe('GET routines', function() {
@@ -108,15 +107,15 @@ describe('Routines', function() {
                     res.body[0].should.have.property('nameGym');
                     res.body[0].nameGym.should.be.a('string');
                     res.body[0].should.have.property('name');
-                    //res.body[0].name.should.be.a('string');
+                    res.body[0].name.should.be.a('string');
                     res.body[0].should.have.property('objective');
-                    //res.body[0].objective.should.be.a('string');
+                    res.body[0].objective.should.be.a('string');
                     res.body[0].should.have.property('series');
-                    //res.body[0].series.should.be.an('int');
+                    res.body[0].series.should.be.equal(1);
                     res.body[0].should.have.property('rep');
-                    //res.body[0].rep.should.be.an('int');
+                    res.body[0].rep.should.be.equal(1);
                     res.body[0].should.have.property('relaxTime');
-                    //res.body[0].relaxTime.should.be.a('double');
+                    //res.body[0].relaxTime.should.be.equal(1);
                     res.body[0].should.have.property('exercises');
                     //res.body[0].nameGym.should.be.an('array');
                     done();

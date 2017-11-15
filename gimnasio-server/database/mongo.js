@@ -8,21 +8,21 @@ var update = require('./update');
 
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
-function connect(callback, args, u, p) {
+function connect(operation, args, u, p) {
 
     MongoClient.connect(url, {
         auth: {
             user: u,
             password: p
         }
-    }, function (err,db) {
+    }, function (err, db) {
         if (err) {
-            console.log(err);
-            return ls
-                ;
+            var l = args.length;
+            args[l-1]("Usuario o contraseña incorrectos.", null);
+            return 0;
         }
         else {
-            callback(db, args);
+            operation(db, args);
             return db;
 
         }
