@@ -22,7 +22,8 @@
     "n-readlines": "^0.2.8",
     "request": "^2.83.0",
     "serve-favicon": "~2.4.5",
-    "shorthash": "0.0.2"
+    "shorthash": "0.0.2",
+    "utf8": "^2.1.2"
   },
   "devDependencies": {
     "chai": "^3.5.0",

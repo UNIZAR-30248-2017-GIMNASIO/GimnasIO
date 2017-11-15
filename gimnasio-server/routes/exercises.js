@@ -64,7 +64,6 @@ router.post('/massive', function(req, res) {
             if (jsonArrayObj !== null) {
                 jsonArrayObj.forEach( function (objeto) {
                     var name = objeto.Nombre;
-                    console.log(name);
                     var muscle = objeto.Musculos;
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;

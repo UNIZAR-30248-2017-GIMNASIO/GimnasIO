@@ -1,24 +1,25 @@
+var utf8 = require('utf8');
+var fs = require('fs');
+var fileExtension = require('file-extension');
+var request = require('request');
+
 function insertExercise(db,args) {
     var collection = db.collection('exercises');
     var callback = args[5];
 
     var imageURL = args[3];
 
-    var fs = require('fs');
-    var fileExtension = require('file-extension');
-    var request = require('request');
     var destiny = "";
     if (imageURL !== "") {
         var download = function (uri, filename, callback) {
             request.head(uri, function (err, res, body) {
-                //console.log('content-type:', res.headers['content-type']);
-                //console.log('content-length:', res.headers['content-length']);
-
                 request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
             });
         };
         var ext = fileExtension(args[3]);
-        destiny = './data/images/' + args[0] + '.' + ext;
+        var filename = args[0].replace(/\s+/g, '');
+        filename = utf8.encode(filename);
+        destiny = './data/images/' + filename + '.' + ext;
         download(imageURL, destiny, function () {
             //console.log('done');
         });
