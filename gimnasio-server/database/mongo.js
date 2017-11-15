@@ -18,7 +18,8 @@ function connect(callback, args, u, p) {
     }, function (err,db) {
         if (err) {
             console.log(err);
-            return undefined;
+            return ls
+                ;
         }
         else {
             callback(db, args);
