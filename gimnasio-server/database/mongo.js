@@ -9,7 +9,6 @@ var update = require('./update');
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
 function connect(operation, args, u, p) {
-
     MongoClient.connect(url, {
         auth: {
             user: u,
@@ -30,19 +29,11 @@ function connect(operation, args, u, p) {
 }
 //=======================================Exercise tables===============================================================
 
-function insertExercise(u, p, name, muscle, description, images, tag, callback){
-
-    connect(exercise.insertExercise, [name, muscle, description, images, tag, callback], u, p);
-
-}
-
 function getExerciseByName(u, p, name,callback){
 
     connect(exercise.getExerciseByName, [name, callback], u, p);
-
 }
 function getExercises(u, p, callback){
-
     connect(exercise.getExercises,[callback], u, p);
 
 }
@@ -91,7 +82,6 @@ function getLastUpdate(u,p,callback) {
     connect(update.getLastUpdate, [callback], u, p);
 }
 
-exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
 exports.deleteExerciseByName = deleteExerciseByName;

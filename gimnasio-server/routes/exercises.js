@@ -61,10 +61,10 @@ router.post('/massive', function(req, res) {
     csv({encoding: 'utf-8'})
         .fromFile('./data/files/ejercicios.csv')
         .on("end_parsed",function(jsonArrayObj){ //when parse finished, result will be emitted here.
-            //console.log(jsonArrayObj);
             if (jsonArrayObj !== null) {
                 jsonArrayObj.forEach( function (objeto) {
                     var name = objeto.Nombre;
+                    console.log(name);
                     var muscle = objeto.Musculos;
                     var description = objeto.Descripcion;
                     var image = objeto.Imagen;
@@ -83,13 +83,13 @@ router.post('/massive', function(req, res) {
 
                 });
                 if (ok) {
-                    mongoDb.getLastUpdate(req.body.user, req.body.pwd, function (result) {
+                    mongoDb.getLastUpdate(req.headers.user, req.headers.pwd, function (result) {
                         if (!result) {
-                            mongoDb.insertlastUpdate(req.body.user,req.body.pwd, function (res) {
+                            mongoDb.insertlastUpdate(req.headers.user,req.headers.pwd, function (res) {
                                 console.log("Inserted lastUpdate");
                             });
                         } else {
-                            mongoDb.updateLastUpdate(req.body.user,req.body.pwd,res.body.lastUpdate, function (res) {
+                            mongoDb.updateLastUpdate(req.headers.user,req.headers.pwd, res.body.lastUpdate, function (res) {
                                 console.log("Updated lastUpdate");
                             });
                         }
