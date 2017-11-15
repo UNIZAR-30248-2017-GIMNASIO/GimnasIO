@@ -41,7 +41,6 @@ function insertExercise(db,args) {
 }
 
 function getExerciseByName(db, args){
-
     var name = args[0];
     console.log('Searching by field name:  ' + name);
 
