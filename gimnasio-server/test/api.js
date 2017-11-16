@@ -143,7 +143,7 @@ describe('dbdata', function() {
             if(!err){
                 console.log("OK")
             }
-            else console.log("al carrer");
+            else console.log(err);
             done();
         })
     });

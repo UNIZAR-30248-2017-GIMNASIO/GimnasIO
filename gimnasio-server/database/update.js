@@ -10,10 +10,10 @@ function insertLastUpdate(db,args){
         function (err) {
             if (err) {
                 console.log('An error ocurred.');
-                return callback(err);
+                return callback(err, null);
             } else {
                 console.log('Inserted new uptdate with date ' + date);
-                return callback('OK');
+                return callback(null, 'OK');
             }
         }
     );
