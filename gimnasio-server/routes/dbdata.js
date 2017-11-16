@@ -24,17 +24,19 @@ var mongoDb = require('../database/mongo');
  *          -A feedback message
  */
 router.get('/', function(req, res) {
-    user = req.headers.user;
-    pwd = req.headers.pwd;
-    if(!user && !pwd) {
-        res.stats(404).send({
+    var user = req.headers.user;
+    var pwd = req.headers.pwd;
+    console.log(req.headers.user);
+    if(!req.headers.user || !req.headers.pwd) {
+        console.log("error");
+        res.status(404).send({
             success: false,
             error: "Cabecera de la petición vacía o incompleta."
         })
     }
     else {
         console.log("Recibida peticion datos db");
-        getSize('./data/images', function (err, size) {//TODO: cambiar por ruta real de imagenes
+        getSize('./data/images', function (err, size) {
             if (err) {
                 console.log(err);
                 res.status(500).send({
@@ -48,9 +50,9 @@ router.get('/', function(req, res) {
                 mongoDb.getStats(user, pwd, function (err, result) {
                     if (err) {
                         console.log(err);
-                        res.status(500).send({
+                        res.status(404).send({
                             success: false,
-                            error: 'Error al pedir stats de db, informe a un administrador'
+                            error: err
                         });
                     }
                     else {

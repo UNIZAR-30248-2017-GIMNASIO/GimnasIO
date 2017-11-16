@@ -96,9 +96,8 @@ function getStats(u, p, callback) {
             password: p
         }
     }, function (err, db) {
-
         if (err) {
-            callback("Error de bd.", null);
+            callback("Usuario o contraseña incorrectos.", null);
             return 0;
         }
         else {
