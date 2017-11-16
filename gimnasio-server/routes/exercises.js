@@ -50,6 +50,34 @@ router.get('/', function(req, res) {
 });
 
 /**
+ * Type: GET
+ * Name: /exercises/download
+ * Description: Returns an image for the exercise given.
+ * Request:
+ *     -Headers: Credentials
+ *       -image: string
+ * Responses:
+ *      success:
+ *          -Sends the image desired
+ *      404:
+ *          -A feedback message
+ */
+router.get('/download', function(req, res){
+    if(req.headers.image){
+        var fileExtension = require('file-extension');
+        var file = req.headers.image;
+        var ext = fileExtension(file);
+        console.log(file);
+        var img = './data/images/' + file;
+        res.download(img); // Set disposition and send it.
+    }
+    else res.status(404).send({
+        success: false,
+        error: 'Header incorrecto o inexistente'
+    })
+});
+
+/**
  * de momento se queda asi, pero habra que moverlo a otro metodo
  */
 router.post('/massive', function(req, res) {
@@ -84,7 +112,7 @@ router.post('/massive', function(req, res) {
                 if (ok) {
                     mongoDb.getLastUpdate(req.headers.user, req.headers.pwd, function (result) {
                         if (!result) {
-                            mongoDb.insertlastUpdate(req.headers.user,req.headers.pwd, function (res) {
+                            mongoDb.insertLastUpdate(req.headers.user,req.headers.pwd, function (res) {
                                 console.log("Inserted lastUpdate");
                             });
                         } else {
@@ -98,15 +126,6 @@ router.post('/massive', function(req, res) {
 
             }
         });
-});
-
-router.get('/download', function(req, res){
-    var fileExtension = require('file-extension');
-    var file = req.headers.image;
-    var ext = fileExtension(file);
-    console.log(file);
-    var img = './data/images/' + file;
-    res.download(img); // Set disposition and send it.
 });
 
 module.exports = router;

@@ -16,6 +16,7 @@
     "express": "~4.15.5",
     "express-fileupload": "^0.3.0",
     "file-extension": "^3.1.2",
+    "get-folder-size": "^1.0.0",
     "jade": "~1.11.0",
     "mongodb": "^2.2.33",
     "morgan": "~1.9.0",
