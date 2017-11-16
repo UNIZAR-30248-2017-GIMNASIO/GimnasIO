@@ -154,7 +154,7 @@ describe('dbdata', function() {
         filename = utf8.encode(filename);
         destiny = './data/images/' + filename + '.' + ext;
         download("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/PM5544_with_non-PAL_signals.png/384px-PM5544_with_non-PAL_signals.png", destiny, function () {
-            //console.log('done');
+            console.log('done downloading image');
             done();
         });
         //done();
