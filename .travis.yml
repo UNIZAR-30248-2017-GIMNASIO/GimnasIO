@@ -10,5 +10,5 @@ install:
   - npm install -g istanbul mocha
   - npm install
 script:
-  - /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/istanbul/lib/cli.js cover /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - nyc --reporter=lcovonly --extension=.ts --extension=.js --exclude=test/api.js /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha --ui bdd
   - codecov
