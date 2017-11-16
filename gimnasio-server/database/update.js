@@ -1,4 +1,4 @@
-function insertlastUpdate(db,args){
+function insertLastUpdate(db,args){
     var collection = db.collection('lastUpdate');
     var callback = args[0];
 
@@ -43,6 +43,6 @@ function getLastUpdate(db, args) {
     });
 
 }
-exports.insertlastUpdate = insertlastUpdate;
+exports.insertLastUpdate = insertLastUpdate;
 exports.updateLastUpdate = updateLastUpdate;
 exports.getLastUpdate = getLastUpdate;

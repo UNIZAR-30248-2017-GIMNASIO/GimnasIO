@@ -10,6 +10,8 @@ var mongoDb = require('../database/mongo');
  * Request:
  *      -nameGym: string
  *      -key: string
+ *      -user: string
+ *      -pwd: string
  * Responses:
  *      200:
  *          -JSON object containing multiple routine objects:

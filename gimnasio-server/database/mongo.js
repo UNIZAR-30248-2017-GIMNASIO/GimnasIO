@@ -5,7 +5,6 @@ var routine = require('./routine');
 var gym = require('./gym');
 var update = require('./update');
 
-
 var url = 'mongodb://localhost:27017/GimnasioAPP';       // Connection URL
 
 function connect(operation, args, u, p) {
@@ -76,8 +75,8 @@ function deleteRoutineByName(u, p, name, callback){
     connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
 
-function insertlastUpdate(u,p,callback){
-    connect(update.insertlastUpdate, [callback],u,p);
+function insertLastUpdate(u,p,callback){
+    connect(update.insertLastUpdate, [callback],u,p);
 }
 
 function updateLastUpdate(u,p, lastUpdate, callback) {
@@ -86,6 +85,50 @@ function updateLastUpdate(u,p, lastUpdate, callback) {
 
 function getLastUpdate(u,p,callback) {
     connect(update.getLastUpdate, [callback], u, p);
+}
+
+//=======================================Routine tables===============================================================
+
+function getStats(u, p, callback) {
+    MongoClient.connect(url, {
+        auth: {
+            user: u,
+            password: p
+        }
+    }, function (err, db) {
+
+        if (err) {
+            callback("Error de bd.", null);
+            return 0;
+        }
+        else {
+            db.stats({}, function(err, stats) {
+                if(!err) {
+                    console.log("stats: " + stats);
+                    db.collection('lastUpdate').findOne({}, function(err, result){
+                        if(!err){
+                            console.log("last update: " + result.lastupdate);
+                            var jsonres = {
+                                stats: stats,
+                                lastUpdate: result.lastupdate
+                            };
+                            callback(null, jsonres);
+                            return db;
+                        }
+                        else{
+                            callback("Error de bd.", null);
+                            return 0;
+                        }
+                    });
+                }
+                else {
+                    callback("Error de bd.", null);
+                    return 0;
+                }
+            });
+
+        }
+    });
 }
 
 exports.insertExercise = insertExercise;
@@ -99,6 +142,7 @@ exports.deleteGymByName = deleteGymByName;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
 exports.deleteRoutineByName = deleteRoutineByName;
-exports.insertlastUpdate = insertlastUpdate;
+exports.insertLastUpdate = insertLastUpdate;
 exports.updateLastUpdate = updateLastUpdate;
 exports.getLastUpdate = getLastUpdate;
+exports.getStats = getStats;
