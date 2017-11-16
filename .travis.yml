@@ -8,3 +8,6 @@ before_install:
 install:
   - cd ./gimnasio-server
   - npm install
+script:
+  - istanbul cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - codecov

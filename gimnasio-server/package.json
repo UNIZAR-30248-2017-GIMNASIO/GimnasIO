@@ -24,7 +24,8 @@
     "request": "^2.83.0",
     "serve-favicon": "~2.4.5",
     "shorthash": "0.0.2",
-    "utf8": "^2.1.2"
+    "utf8": "^2.1.2",
+    "codecov": "3.0.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
