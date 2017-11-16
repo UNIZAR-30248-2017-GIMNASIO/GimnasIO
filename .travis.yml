@@ -10,5 +10,6 @@ install:
   - npm install -g istanbul mocha
   - npm install
 script:
+  - cd ./gimnasio-server
   - istanbul cover _mocha
   - codecov
