@@ -138,27 +138,27 @@ describe('Routines', function() {
 
 describe('dbdata', function() {
 
-    before(function(done) {
-        var fs = require('fs');
-        var request = require('request');
-        var fileExtension = require('file-extension');
-        var utf8 = require('utf8');
-
-        var download = function (uri, filename, callback) {
-            request.head(uri, function (err, res, body) {
-                request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
-            });
-        };
-        var ext = fileExtension("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/PM5544_with_non-PAL_signals.png/384px-PM5544_with_non-PAL_signals.png");
-        var filename = "test";
-        filename = utf8.encode(filename);
-        destiny = './data/images/' + filename + '.' + ext;
-        download("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/PM5544_with_non-PAL_signals.png/384px-PM5544_with_non-PAL_signals.png", destiny, function () {
-            console.log('done downloading image');
-            done();
-        });
-        //done();
-    });
+    // before(function(done) {
+    //     var fs = require('fs');
+    //     var request = require('request');
+    //     var fileExtension = require('file-extension');
+    //     var utf8 = require('utf8');
+    //
+    //     var download = function (uri, filename, callback) {
+    //         request.head(uri, function (err, res, body) {
+    //             request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+    //         });
+    //     };
+    //     var ext = fileExtension("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/PM5544_with_non-PAL_signals.png/384px-PM5544_with_non-PAL_signals.png");
+    //     var filename = "test";
+    //     filename = utf8.encode(filename);
+    //     destiny = './data/images/' + filename + '.' + ext;
+    //     download("https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/PM5544_with_non-PAL_signals.png/384px-PM5544_with_non-PAL_signals.png", destiny, function () {
+    //         console.log('done downloading image');
+    //         done();
+    //     });
+    //     //done();
+    // });
 
     describe('GET dbdata', function () {
         it('should get the db data', function(done) {
@@ -208,10 +208,10 @@ describe('dbdata', function() {
         })
     });
 
-    after(function(done) {
-        var fs = require('fs');
-        fs.unlink("./data/images/test.png");
-        done();
-    })
+    // after(function(done) {
+    //     var fs = require('fs');
+    //     fs.unlink("./data/images/test.png");
+    //     done();
+    // })
 });
 
