@@ -7,8 +7,8 @@ before_install:
   - mongo GimnasioAPP  --eval 'db.createUser({user:"gpsAdmin",pwd:"Gps@1718",roles:["readWrite"]});'
 install:
   - cd ./gimnasio-server
-  - npm install -g istanbul mocha nyc
+  - npm install -g istanbul mocha
   - npm install
 script:
-  - nyc cover ./node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
+  - istanbul cover /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha --reporter lcovonly -- -R spec
   - codecov
