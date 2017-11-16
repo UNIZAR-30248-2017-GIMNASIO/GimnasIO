@@ -11,5 +11,5 @@ install:
   - npm install -g istanbul mocha nyc
   - npm install
 script:
-  - nyc --reporter=lcovonly /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha #--extension=.ts --extension=.js --exclude=test/api.js
+  - nyc --reporter=lcovonly /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha --exit #--extension=.ts --extension=.js --exclude=test/api.js
   #- codecov
