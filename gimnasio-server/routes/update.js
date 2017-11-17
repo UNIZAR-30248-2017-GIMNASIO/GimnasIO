@@ -14,11 +14,11 @@ var mongoDb = require('../database/mongo');
  *       -pwd: string
  * Responses:
  *      200:
- *          -string
+ *          -A feedback message
  *      404:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.get('/', function(req, res) {
     if(req.headers.user && req.headers.pwd){
@@ -27,10 +27,16 @@ router.get('/', function(req, res) {
                 var response = {lastUpdate: result[0].lastupdate};
                 res.status(200).send(response);
             }
-            else res.status(404).send('Empty database. Please contact an administrator.');
+            else res.status(404).send({
+                success: false,
+                error: err
+            });
         })
     }
-    else res.status(404).send("Cuerpo de la peticion vacío o incorrecto.");
+    else res.status(404).send({
+        success: false,
+        error: "Cabecera de la petición vacía o incompleta."
+    });
 
 });
 

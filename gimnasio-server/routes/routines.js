@@ -22,9 +22,9 @@ var mongoDb = require('../database/mongo');
  *              -rep: int
  *              -relaxTime: int
  *      404:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.get('/', function(req, res) {
     var userKey = 0;

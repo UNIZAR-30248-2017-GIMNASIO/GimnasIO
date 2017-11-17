@@ -20,9 +20,9 @@ var mongoDb = require('../database/mongo');
  *              -userKey: string
  *              -coachKey: string
  *      400:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.post('/newGym', function(req, res) {
     var user = req.headers.user;
@@ -72,11 +72,11 @@ router.post('/newGym', function(req, res) {
  *      -exercises: [string]
  * Responses:
  *      200:
- *          -A feedback message
+ *          -A feedback object
  *      400:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.post('/newRoutine', function(req, res) {
     if(req.headers.user && req.headers.pwd && req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){

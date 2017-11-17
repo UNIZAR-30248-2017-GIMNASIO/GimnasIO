@@ -1,7 +1,7 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../app');
-//var server = "localhost:3000";
+//var server = "localhost:32001";
 var should = chai.should();
 var expect = chai.expect;
 var assert = require('assert');
@@ -11,6 +11,19 @@ chai.use(chaiHttp);
 chai.use(require('chai-json'));
 //Our parent block
 
+describe('Index', function() {
+    describe('GET index', function() {
+        it('should return an index page', function(done) {
+            chai.request(server)
+                .get('/')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        })
+    })
+});
 describe('Exercises', function() {
     /*
      * Insert an exercise
@@ -49,7 +62,6 @@ describe('Exercises', function() {
                     done();
                 })
         });
-        //TODO: call does not return anything but it fails, uncomment when fixed
         it('should return an error message when trying to GET with an incorrect user or password', function(done) {
             chai.request(server)
                 .get('/exercises')
@@ -63,6 +75,32 @@ describe('Exercises', function() {
                 })
         });
     });
+
+    describe('GET image', function() {
+       it('should GET an image if asked correctly', function(done) {
+           chai.request(server)
+               .get('/exercises/download')
+               .set('image', 'test.png')
+               .end(function(err, res) {
+                   res.should.have.status(200);
+                   res.body.should.not.have.property('success');
+                   done();
+               })
+       });
+       it('should return an error message when trying to GET with an incorrect image filename', function(done){
+           chai.request(server)
+               .get('/exercises/download')
+               .set('image', 'error')
+               .end(function(err, res) {
+                   res.should.have.status(404);
+                   res.body.should.have.property('success');
+                   res.body.success.should.be.equal(false);
+                   res.body.should.have.property('error');
+                   res.body.error.should.be.equal('Archivo no existente.');
+                   done();
+               })
+       })
+    });
     /*
      * Delete the previously inserted exercise
      */
@@ -74,7 +112,6 @@ describe('Exercises', function() {
 
 });
 
-//TODO: not passing yet
 describe('Routines', function() {
 
     var key = "";
@@ -82,7 +119,7 @@ describe('Routines', function() {
      * Insert a gym and a routine
      */
     before(function(done) {
-        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, [], "", function (err, res) {
+        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, 1, [], function (err, res) {
             mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
                 key = key2;
                 done();
@@ -111,13 +148,13 @@ describe('Routines', function() {
                     res.body[0].should.have.property('objective');
                     res.body[0].objective.should.be.a('string');
                     res.body[0].should.have.property('series');
-                    res.body[0].series.should.be.equal(1);
+                    res.body[0].series.should.be.a('Number');
                     res.body[0].should.have.property('rep');
-                    res.body[0].rep.should.be.equal(1);
+                    res.body[0].rep.should.be.a('Number');
                     res.body[0].should.have.property('relaxTime');
-                    //res.body[0].relaxTime.should.be.equal(1);
+                    res.body[0].relaxTime.should.be.a('Number');
                     res.body[0].should.have.property('exercises');
-                    //res.body[0].nameGym.should.be.an('array');
+                    res.body[0].exercises.should.be.an('array');
                     done();
                 })
         })
@@ -136,7 +173,7 @@ describe('Routines', function() {
     });
 });
 
-describe('dbdata', function() {
+describe('DBdata', function() {
 
     before(function(done) {
         mongoDb.insertLastUpdate("gpsAdmin", "Gps@1718", function(err, result){
@@ -195,11 +232,63 @@ describe('dbdata', function() {
                 })
         })
     });
-
-    // after(function(done) {
-    //     var fs = require('fs');
-    //     fs.unlink("./data/images/test.png");
-    //     done();
-    // })
 });
 
+describe('Update', function() {
+    before(function(done) {
+        mongoDb.insertLastUpdate("gpsAdmin", "Gps@1718", function(err, result){
+            if(!err){
+                console.log("OK")
+            }
+            else console.log(err);
+            done();
+        })
+    });
+
+    describe('GET lastupdate', function(){
+        it('should GET the last update date', function(done){
+            chai.request(server)
+                .get('/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    res.body.should.have.property('lastUpdate');
+                    res.body.lastUpdate.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an incorrect user or password', function(done){
+            chai.request(server)
+                .get('/update')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .end(function(err, res){
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('error');
+                    res.body.error.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an empty header', function(done) {
+            chai.request(server)
+                .get('/update')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('error');
+                    res.body.error.should.equal('Cabecera de la petición vacía o incompleta.');
+                    done();
+                })
+        })
+    });
+});
+
+describe('Gyms', function(){
+    describe('POST a new gym', function() {
+        //TODO: gyms tests
+    });
+});
