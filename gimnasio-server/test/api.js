@@ -136,3 +136,70 @@ describe('Routines', function() {
     });
 });
 
+describe('dbdata', function() {
+
+    before(function(done) {
+        mongoDb.insertLastUpdate("gpsAdmin", "Gps@1718", function(err, result){
+            if(!err){
+                console.log("OK")
+            }
+            else console.log(err);
+            done();
+        })
+    });
+
+    describe('GET dbdata', function () {
+        it('should get the db data', function(done) {
+            chai.request(server)
+                .get('/dbdata')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .end(function(err, res) {
+                    res.should.have.status(200);
+                    res.body.should.be.an('Object');
+                    res.body.should.have.property('imageSize');
+                    res.body.imageSize.should.be.an('String');
+                    res.body.should.have.property('dataSize');
+                    res.body.dataSize.should.be.an('String');
+                    res.body.should.have.property('totalSize');
+                    res.body.totalSize.should.be.an('String');
+                    res.body.should.have.property('lastUpdate');
+                    res.body.lastUpdate.should.be.an('String');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an incorrect user or password', function(done) {
+            chai.request(server)
+                .get('/dbdata')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('error');
+                    res.body.error.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an empty header', function(done) {
+            chai.request(server)
+                .get('/dbdata')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('error');
+                    res.body.error.should.equal('Cabecera de la petición vacía o incompleta.');
+                    done();
+                })
+        })
+    });
+
+    // after(function(done) {
+    //     var fs = require('fs');
+    //     fs.unlink("./data/images/test.png");
+    //     done();
+    // })
+});
+

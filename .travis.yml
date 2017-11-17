@@ -1,3 +1,4 @@
+sudo: true
 language: node_js
 node_js:
  - 6.9.5
@@ -7,4 +8,8 @@ before_install:
   - mongo GimnasioAPP  --eval 'db.createUser({user:"gpsAdmin",pwd:"Gps@1718",roles:["readWrite"]});'
 install:
   - cd ./gimnasio-server
+  - npm install -g istanbul mocha nyc
   - npm install
+script:
+  - nyc --reporter=lcovonly /home/travis/.nvm/versions/node/v6.9.5/lib/node_modules/mocha/bin/_mocha --exit #--extension=.ts --extension=.js --exclude=test/api.js
+  - codecov
