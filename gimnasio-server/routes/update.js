@@ -29,13 +29,13 @@ router.get('/', function(req, res) {
             }
             else res.status(404).send({
                 success: false,
-                error: err
+                message: err
             });
         })
     }
     else res.status(404).send({
         success: false,
-        error: "Cabecera de la petición vacía o incompleta."
+        message: "Cabecera de la petición vacía o incompleta."
     });
 
 });

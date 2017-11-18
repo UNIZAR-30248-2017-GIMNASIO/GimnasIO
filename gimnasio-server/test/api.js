@@ -30,6 +30,12 @@ describe('Exercises', function() {
      */
     before(function(done) {
         mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", "", "autotest", function (err, res) {
+            if(err){
+                console.log("Error al insertar ejercicio");
+            }
+            else{
+                console.log("Ejercicio insertado correctamente");
+            }
             done();
         });
     });
@@ -52,7 +58,7 @@ describe('Exercises', function() {
                     done();
                 })
         });
-        it('should return an error message when trying to GET without user, pwd or nameGym', function(done) {
+        it('should return an error message when trying to GET with an empty header', function(done) {
             chai.request(server)
                 .get('/exercises')
                 .end(function(err, res) {
@@ -95,8 +101,8 @@ describe('Exercises', function() {
                    res.should.have.status(404);
                    res.body.should.have.property('success');
                    res.body.success.should.be.equal(false);
-                   res.body.should.have.property('error');
-                   res.body.error.should.be.equal('Archivo no existente.');
+                   res.body.should.have.property('message');
+                   res.body.message.should.be.equal('Archivo no existente.');
                    done();
                })
        })
@@ -120,10 +126,22 @@ describe('Routines', function() {
      */
     before(function(done) {
         mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, 1, [], function (err, res) {
-            mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
-                key = key2;
+            if(err){
+                console.log("Fallo al intentar insertar rutina");
                 done();
-            })
+            }
+            else{
+                mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
+                    if(err){
+                        console.log("Fallo al intentar insertar gym");
+                    }
+                    else{
+                        key = key1;
+                        console.log("Todo OK " + key);
+                    }
+                    done();
+                });
+            }
         });
     });
 
@@ -134,9 +152,10 @@ describe('Routines', function() {
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
                 .set('key', key)
-                .set('nameGym', 'autotest')
-                .set('Content-Type', 'application/json')
+                .set('namegym', 'autotest')
                 .end(function(err, res) {
+                    console.log(key);
+                    console.log(res.body);
                     res.should.have.status(200);
                     res.body.should.be.an('object');
                     res.body[0].should.have.property('_id');
@@ -157,15 +176,70 @@ describe('Routines', function() {
                     res.body[0].exercises.should.be.an('array');
                     done();
                 })
-        })
+        });
+        it('should return an error message when trying to GET with an empty header', function(done) {
+            chai.request(server)
+                .get('/routines')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Cabecera de la peticion vacía o incorrecta.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an incorrect user or password', function(done) {
+            chai.request(server)
+                .get('/routines')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .set('key', key)
+                .set('nameGym', 'autotest')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an incorrect nameGym', function(done) {
+            chai.request(server)
+                .get('/routines')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('key', key)
+                .set('namegym', 'error')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Gimnasio no registrado.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to GET with an incorrect key', function(done) {
+            chai.request(server)
+                .get('/routines')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('key', "error")
+                .set('nameGym', 'autotest')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.success.should.equal(false);
+                    res.body.message.should.equal('Clave del gimnasio incorrecta o inválida.');
+                    done();
+                })
+        });
     });
 
     /*
      * Delete the previously inserted routine and gym
      */
     after(function(done) {
-        mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(){
-            mongoDb.deleteGymByName("gpsAdmin", "Gps@1718", "autotest", function(){
+        mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result){
+            if(err){
+                console.log("Error al ")
+            }
+            mongoDb.deleteGymByName("gpsAdmin", "Gps@1718", "autotest", function(err, result){
                 done();
             });
         });
@@ -214,8 +288,8 @@ describe('DBdata', function() {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
                     res.body.success.should.equal(false);
-                    res.body.should.have.property('error');
-                    res.body.error.should.equal('Usuario o contraseña incorrectos.');
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
                     done();
                 })
         });
@@ -226,8 +300,8 @@ describe('DBdata', function() {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
                     res.body.success.should.equal(false);
-                    res.body.should.have.property('error');
-                    res.body.error.should.equal('Cabecera de la petición vacía o incompleta.');
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la petición vacía o incompleta.');
                     done();
                 })
         })
@@ -235,14 +309,25 @@ describe('DBdata', function() {
 });
 
 describe('Update', function() {
+
+    var lastUpdate;
+
     before(function(done) {
-        mongoDb.insertLastUpdate("gpsAdmin", "Gps@1718", function(err, result){
-            if(!err){
-                console.log("OK")
+        mongoDb.getLastUpdate("gpsAdmin", "Gps@1718", function(err, result) {
+            if(!err) {
+                lastUpdate = result;
+                mongoDb.insertLastUpdate("gpsAdmin", "Gps@1718", function(err, result){
+                    if(!err){
+                        console.log("OK")
+                    }
+                    else console.log(err);
+                    done();
+                });
             }
-            else console.log(err);
-            done();
-        })
+            else {
+                console.log("Error pidiendo lastUpdate");
+            }
+        });
     });
 
     describe('GET lastupdate', function(){
@@ -267,8 +352,8 @@ describe('Update', function() {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
                     res.body.success.should.equal(false);
-                    res.body.should.have.property('error');
-                    res.body.error.should.equal('Usuario o contraseña incorrectos.');
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
                     done();
                 })
         });
@@ -279,16 +364,204 @@ describe('Update', function() {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
                     res.body.success.should.equal(false);
-                    res.body.should.have.property('error');
-                    res.body.error.should.equal('Cabecera de la petición vacía o incompleta.');
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la petición vacía o incompleta.');
                     done();
                 })
         })
     });
+
+    after(function(done) {
+        mongoDb.updateLastUpdate("gpsAdmin", "Gps@1718", lastUpdate, function(err, result) {
+            if(!err){
+                console.log("OK");
+            }
+            else console.log("Error restaurando update");
+            done();
+        })
+    })
 });
 
 describe('Gyms', function(){
+    var gymKey;
+    // Insert exercises an gym necessary for the tests
+    before(function(done) {
+        mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", "", "autotest", function(err, result) {
+            if(err){
+                console.log("Error insertando ejercicio primero");
+                done();
+            }
+            else{
+                mongoDb.insertExercise("gpsAdmin", "Gps@1718", "autotest2", "autotest2", "autotes2t", "", "autotest2", function(err2, result) {
+                    if(err2){
+                        console.log("Error insertando ejercicio segundo");
+                        done();
+                    }
+                    else{
+                        mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, result) {
+                            if(err){
+                                console.log("Error insertando gimnasio");
+                                done();
+                            }
+                            else{
+                                gymKey = result.userKey;
+                            }
+                            done();
+                        })
+                    }
+                })
+            }
+        })
+    });
+
     describe('POST a new gym', function() {
-        //TODO: gyms tests
+        it('should POST a new gym and return the set of keys', function(done) {
+            chai.request(server)
+                .post('/gym/newGym')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .send({nameGym: "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(200);
+                    res.body.should.have.property('coachKey');
+                    res.body.coachKey.should.be.a('String');
+                    res.body.should.have.property('userKey');
+                    res.body.userKey.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an incorrect user or password', function(done){
+            chai.request(server)
+                .post('/gym/newGym')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .send({nameGym: "autotest"})
+                .end(function(err, res){
+                    console.log(res.body);
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty header', function(done) {
+            chai.request(server)
+                .post('/gym/newGym')
+                .send({nameGym: "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Parámetros incompletos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty body', function(done) {
+            chai.request(server)
+                .post('/gym/newGym')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Parámetros incompletos.');
+                    done();
+                })
+        });
+    });
+
+    describe('POST a new premium routine', function() {
+
+        it('should POST a routine for the given gym', function(done) {
+            chai.request(server)
+                .post('/gym/newRoutine')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(true);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal("Inserción correcta.");
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an incorrect user or password', function(done){
+            chai.request(server)
+                .post('/gym/newRoutine')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res){
+                    console.log(res.body);
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty header', function(done) {
+            chai.request(server)
+                .post('/gym/newRoutine')
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la peticion vacía o incorrecta.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty body', function(done) {
+            chai.request(server)
+                .post('/gym/newRoutine')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cuerpo de la peticion vacío o incorrecto.');
+                    done();
+                })
+        });
+    });
+    // Delete the previously inserted mock objects
+    after(function (done) {
+        mongoDb.deleteExerciseByName("gpsAdmin", "Gps@1718", "autotest", function (err, result) {
+            if(err){
+                console.log("Error borrando ejercicio primero")
+                done();
+            }
+            else{
+                mongoDb.deleteExerciseByName("gpsAdmin", "Gps@1718", "autotest2", function (err, result) {
+                    if(err) {
+                        console.log("Error borrando ejercicio segundo");
+                        done();
+                    }
+                    else{
+                        mongoDb.deleteGymByName("gpsAdmin", "Gps@1718", "autotest", function(err, result) {
+                            if(err) {
+                                console.log("Error borrando gym");
+                            }
+                            else{
+                                console.log("Borrado con exito");
+                            }
+                            done();
+                        })
+                    }
+                })
+            }
+        })
     });
 });

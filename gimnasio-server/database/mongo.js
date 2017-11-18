@@ -51,6 +51,10 @@ function insertNewGym (u, p, nameGym, callback) {
     connect(gym.insertNewGym, [nameGym, callback], u, p);
 }
 
+function getGymByName (u, p, nameGym, callback) {
+    connect(gym.getGymByName, [nameGym, callback], u, p);
+}
+
 function getUserKey (u, p, nameGym, callback) {
     connect(gym.getUserKey, [nameGym, callback], u, p);
 }
@@ -75,6 +79,7 @@ function deleteRoutineByName(u, p, name, callback){
     connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
 
+//=======================================Update tables===============================================================
 function insertLastUpdate(u,p,callback){
     connect(update.insertLastUpdate, [callback],u,p);
 }
@@ -87,8 +92,7 @@ function getLastUpdate(u,p,callback) {
     connect(update.getLastUpdate, [callback], u, p);
 }
 
-//=======================================Routine tables===============================================================
-
+//=======================================Stat tables===============================================================
 function getStats(u, p, callback) {
     MongoClient.connect(url, {
         auth: {
@@ -135,6 +139,7 @@ exports.getExerciseByName = getExerciseByName;
 exports.getExercises = getExercises;
 exports.deleteExerciseByName = deleteExerciseByName;
 exports.insertNewGym=insertNewGym;
+exports.getGymByName=getGymByName;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
 exports.deleteGymByName = deleteGymByName;
