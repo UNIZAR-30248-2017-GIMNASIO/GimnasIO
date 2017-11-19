@@ -21,7 +21,7 @@ function insertExercise(db,args) {
         filename = utf8.encode(filename);
         destiny = './data/images/' + filename + '.' + ext;
         download(imageURL, destiny, function () {
-            //console.log('done');
+            console.log('Image downloaded at' + destiny);
         });
     }
     //Insert a new exercise
