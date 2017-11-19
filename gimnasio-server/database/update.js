@@ -24,10 +24,15 @@ function insertLastUpdate(db,args){
 
 function updateLastUpdate(db, args) {
     var collection = db.collection('lastUpdate');
-    var callback = args[1]
+    var callback = args[1];
     var date = new Date();
     console.log(date);
-    collection.update({lastUpdate: args[0]}, {$set:{lastUpdate: date}});
+    collection.update({lastUpdate: args[0]}, {$set:{lastUpdate: date}}, function (err, result) {
+        if (!err) {
+            console.log('Updating lastUpdate');
+        }
+        return callback(err, result);
+    });
 }
 
 function getLastUpdate(db, args) {

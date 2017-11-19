@@ -21,12 +21,11 @@ var mongoDb = require('../database/mongo');
  *              -images: [string]
  *              -tag: string
  *      404:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.get('/', function(req, res) {
-    console.log(req.headers);
     if(req.headers.user && req.headers.pwd){
         mongoDb.getExercises(req.headers.user, req.headers.pwd, function (err, result) {
             if(!err){
@@ -60,20 +59,34 @@ router.get('/', function(req, res) {
  *      success:
  *          -Sends the image desired
  *      404:
- *          -A feedback message
+ *          -A feedback object
  */
 router.get('/download', function(req, res){
     if(req.headers.image){
         var fileExtension = require('file-extension');
+        var fs = require('fs');
         var file = req.headers.image;
         var ext = fileExtension(file);
-        console.log(file);
         var img = './data/images/' + file;
-        res.download(img); // Set disposition and send it.
+        fs.stat(img, function(err, stat) {
+            if(err === null){
+                res.download(img); // Set disposition and send it.
+            } else if(err.code === 'ENOENT') {
+                res.status(404).send({
+                    success: false,
+                    message: 'Archivo no existente.'
+                });
+            } else {
+                res.status(500).send({
+                    sucess: false,
+                    message: 'Fallo interno de servidor, por favor contacte a un administrador'
+                })
+            }
+        });
     }
     else res.status(404).send({
         success: false,
-        error: 'Header incorrecto o inexistente'
+        message: 'Header incorrecto o inexistente'
     })
 });
 
@@ -123,7 +136,6 @@ router.post('/massive', function(req, res) {
                     });
                     res.status(200).send('OK');
                 }
-
             }
         });
 });

@@ -31,7 +31,7 @@ router.get('/', function(req, res) {
         console.log("error");
         res.status(404).send({
             success: false,
-            error: "Cabecera de la petición vacía o incompleta."
+            message: "Cabecera de la petición vacía o incompleta."
         })
     }
     else {
@@ -41,7 +41,7 @@ router.get('/', function(req, res) {
                 console.log(err);
                 res.status(500).send({
                     success: false,
-                    error: 'Error al calcular tamaño de imagenes, informe a un administrador'
+                    message: 'Error al calcular tamaño de imagenes, informe a un administrador'
                 });
             }
             else {
@@ -52,7 +52,7 @@ router.get('/', function(req, res) {
                         console.log(err);
                         res.status(404).send({
                             success: false,
-                            error: err
+                            message: err
                         });
                     }
                     else {

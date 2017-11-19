@@ -28,6 +28,21 @@ function insertNewGym (db, args) {
 
 }
 
+function getGymByName (db, args) {
+    var collection = db.collection('gyms');
+
+    var nameGym = args[0];
+    var callback = args[1];
+
+    collection.findOne({nameGym: nameGym}, function(err, result) {
+        if(!err){
+            console.log("Found Gym");
+            return callback(null, "OK")
+        }
+        else return callback("Gimnasio no registrado.", null);
+    })
+}
+
 function getUserKey (db, args) {
 
     var collection = db.collection('gyms');
@@ -36,10 +51,16 @@ function getUserKey (db, args) {
     var callback = args[1];
 
     collection.findOne({nameGym: nameGym}, function (err, result) {
-       if (!err) {
+        var resultF = null;
+        if (result) {
            console.log('Found gym with name ' + nameGym);
-       }
-       return callback(err, result.userKey);
+           err = null;
+           resultF = result.userKey;
+        }
+        else{
+            err = "Gimnasio no registrado.";
+        }
+        return callback(err, resultF);
     });
 }
 
@@ -50,10 +71,16 @@ function getCoachKey (db, args) {
     var callback = args[1];
 
     collection.findOne({nameGym: nameGym}, function (err, result) {
-        if (!err) {
+        var resultF = null;
+        if (result) {
             console.log('Found gym with name ' + nameGym);
+            resultF = result.coachKey;
+            err = null;
         }
-        return callback(err, result.coachKey);
+        else{
+            err = "Gimnasio no registrado.";
+        }
+        return callback(err, resultF);
     });
 }
 
@@ -63,7 +90,7 @@ function deleteGymByName (db, args) {
     var nameGym = args[0];
     var callback = args[1];
 
-    collection.deleteOne({nameGym: nameGym}, function (err, result) {
+    collection.deleteMany({nameGym: nameGym}, function (err, result) {
         var res = "";
         var error = "";
         if (!err) {
@@ -86,6 +113,7 @@ function hash(string) {
 }
 
 exports.insertNewGym=insertNewGym;
+exports.getGymByName=getGymByName;
 exports.getUserKey=getUserKey;
 exports.getCoachKey=getCoachKey;
 exports.deleteGymByName=deleteGymByName;
