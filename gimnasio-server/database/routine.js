@@ -9,7 +9,7 @@ function insertRoutine (db, args) {
             }
             else{
                 console.log('Inserted new routine in gym: '+ args[0] + ' with name ' + args[1]);
-                return callback('OK');
+                return callback(err, 'OK');
             }
         }
     );

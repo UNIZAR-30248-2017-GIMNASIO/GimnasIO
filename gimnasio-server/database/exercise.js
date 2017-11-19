@@ -32,7 +32,7 @@ function insertExercise(db,args) {
                 return callback(err);
             } else {
                 console.log('Inserted new exercise with name ' + args[0]);
-                return callback('OK');
+                return callback(null, 'OK');
             }
         }
     );

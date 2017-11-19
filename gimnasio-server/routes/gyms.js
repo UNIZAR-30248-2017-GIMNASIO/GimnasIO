@@ -20,9 +20,9 @@ var mongoDb = require('../database/mongo');
  *              -userKey: string
  *              -coachKey: string
  *      400:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.post('/newGym', function(req, res) {
     var user = req.headers.user;
@@ -32,7 +32,6 @@ router.post('/newGym', function(req, res) {
             'success': false,
             'message': 'Parámetros incompletos.'
         });
-        return 0;
     }
     else{
         mongoDb.insertNewGym(user, pwd, req.body.nameGym, function(err, userKey, coachKey){
@@ -72,32 +71,50 @@ router.post('/newGym', function(req, res) {
  *      -exercises: [string]
  * Responses:
  *      200:
- *          -A feedback message
+ *          -A feedback object
  *      400:
- *          -A feedback message
+ *          -A feedback object
  *      500:
- *          -A feedback message
+ *          -A feedback object
  */
 router.post('/newRoutine', function(req, res) {
-    if(req.headers.user && req.headers.pwd && req.body.nameGym && req.body.name && req.body.objective && req.body.series && req.body.rep && req.body.relaxTime && req.body.exercises){
-        mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
-            function(err){
-            if(err === 'OK'){
-                res.status(200).send({
-                    'success': true,
-                    'message': "Inserción correcta."
-                });
-            }
-            else res.status(404).send({
-                'success': false,
-                'message': "Error de inserción. Comprueba los parametros."
-            })
+    if(!req.headers.user || !req.headers.pwd) {
+        res.status(404).send({
+            'success': false,
+            'message': "Cabecera de la peticion vacía o incorrecta."
         });
     }
-    else res.status(404).send({
-        'success': false,
-        'message': "Cuerpo de la petición vacío o incompleto."
-    });
+    else{
+        if(!req.body.nameGym || !req.body.name || !req.body.objective || !req.body.series || !req.body.rep || !req.body.relaxTime || !req.body.exercises){
+            res.status(404).send({
+                'success': false,
+                'message': "Cuerpo de la peticion vacío o incorrecto."
+            });
+        }
+        else{
+            mongoDb.getGymByName(req.headers.user, req.headers.pwd, req.body.nameGym, function(err, result) {
+                if(!err){
+                    mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
+                        function(err, result){
+                            if(result === 'OK'){
+                                res.status(200).send({
+                                    'success': true,
+                                    'message': "Inserción correcta."
+                                });
+                            }
+                            else res.status(404).send({
+                                'success': false,
+                                'message': err
+                            })
+                        });
+                }
+                else res.status(404).send({
+                    'success': false,
+                    'message': err
+                })
+            });
+        }
+    }
 });
 
 module.exports = router;
