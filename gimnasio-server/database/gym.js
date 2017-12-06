@@ -84,6 +84,28 @@ function getCoachKey (db, args) {
     });
 }
 
+function getKeys (db, args) {
+    var collection = db.collection('gyms');
+
+    var nameGym = args[0];
+    var callback = args[1];
+
+    collection.findOne({nameGym: nameGym}, function (err, result) {
+        var userKey;
+        var coachKey;
+        if (result) {
+            console.log('Found gym with name ' + nameGym);
+            userKey = result.userKey;
+            coachKey = result.coachKey;
+            err = null;
+        }
+        else{
+            err = "Gimnasio no registrado.";
+        }
+        return callback(err, userKey, coachKey);
+    });
+}
+
 function deleteGymByName (db, args) {
     var collection = db.collection('gyms');
 
@@ -116,4 +138,5 @@ exports.insertNewGym=insertNewGym;
 exports.getGymByName=getGymByName;
 exports.getUserKey=getUserKey;
 exports.getCoachKey=getCoachKey;
+exports.getKeys=getKeys;
 exports.deleteGymByName=deleteGymByName;
