@@ -120,7 +120,8 @@ describe('Exercises', function() {
 
 describe('Routines', function() {
 
-    var key = "";
+    var userKey;
+    var coachKey;
     /*
      * Insert a gym and a routine
      */
@@ -131,13 +132,14 @@ describe('Routines', function() {
                 done();
             }
             else{
-                mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, key1, key2) {
+                mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, uKey, cKey) {
                     if(err){
                         console.log("Fallo al intentar insertar gym");
                     }
                     else{
-                        key = key1;
-                        console.log("Todo OK " + key);
+                        userKey = uKey;
+                        coachKey = cKey;
+                        console.log("Todo OK ");
                     }
                     done();
                 });
@@ -151,11 +153,9 @@ describe('Routines', function() {
                 .get('/routines')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
-                .set('key', key)
+                .set('key', userKey)
                 .set('namegym', 'autotest')
                 .end(function(err, res) {
-                    console.log(key);
-                    console.log(res.body);
                     res.should.have.status(200);
                     res.body.should.be.an('object');
                     res.body[0].should.have.property('_id');
@@ -188,7 +188,7 @@ describe('Routines', function() {
                 .get('/routines')
                 .set('user', 'error')
                 .set('pwd', 'error')
-                .set('key', key)
+                .set('key', userKey)
                 .set('nameGym', 'autotest')
                 .end(function(err, res) {
                     res.should.have.status(404);
@@ -202,7 +202,7 @@ describe('Routines', function() {
                 .get('/routines')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
-                .set('key', key)
+                .set('key', userKey)
                 .set('namegym', 'error')
                 .end(function(err, res) {
                     res.should.have.status(404);
@@ -225,6 +225,203 @@ describe('Routines', function() {
                     done();
                 })
         });
+    });
+
+    describe('POST a new premium routine', function() {
+
+        it('should POST a routine for the given gym', function(done) {
+            chai.request(server)
+                .post('/routines/newRoutine')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function (err, res) {
+                    res.should.have.status(200);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(true);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal("Inserción correcta.");
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an incorrect user or password', function(done){
+            chai.request(server)
+                .post('/routines/newRoutine')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res){
+                    console.log(res.body);
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty header', function(done) {
+            chai.request(server)
+                .post('/routines/newRoutine')
+                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la petición vacía o incorrecta.');
+                    done();
+                })
+        });
+        it('should return an error message when trying to POST with an empty body', function(done) {
+            chai.request(server)
+                .post('/routines/newRoutine')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cuerpo de la peticion vacío o incorrecto.');
+                    done();
+                })
+        });
+
+        after(function(done) {
+            mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result) {
+                if(err) {
+                    console.log("Error al eliminar las rutinas automaticamente");
+                    done();
+                } else {
+                    console.log("Rutinas borradas correctamente");
+                    done();
+                }
+            })
+        })
+    });
+
+    describe("PUT a new data collection updating the given routine of a given gym", function() {
+        it('should return success when updating a routine correctly', function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(200);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(true);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Rutina actualizada correctamente.');
+                    done();
+                })
+        });
+        it("should return error when trying to put with empty headers", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la peticion vacía o incorrecta.');
+                    done();
+                })
+        });
+        it("should return error when trying to put with empty body", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cuerpo de la peticion vacío o incorrecto.');
+                    done();
+                })
+        });
+        it("should return an error when trying to put with incorrect user or password", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it("should return an error when trying to put with an incorrect gym", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "error")
+                .set('key', coachKey)
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Gimnasio no registrado.');
+                    done();
+                })
+        });
+        it("should return an error when trying to put with an incorrect key", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', "error")
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Clave del gimnasio incorrecta o inválida.');
+                    done();
+                })
+        });
+        it("should return an error when trying to put with a user key", function(done) {
+            chai.request(server)
+                .put('/routines/update')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', userKey)
+                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Permisos insuficientes.');
+                    done();
+                })
+        })
     });
 
     /*
@@ -473,79 +670,7 @@ describe('Gyms', function(){
         });
     });
 
-    describe('POST a new premium routine', function() {
 
-        it('should POST a routine for the given gym', function(done) {
-            chai.request(server)
-                .post('/gym/newRoutine')
-                .set('user', 'gpsAdmin')
-                .set('pwd', 'Gps@1718')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
-                .end(function (err, res) {
-                    res.should.have.status(200);
-                    res.body.should.have.property('success');
-                    res.body.success.should.equal(true);
-                    res.body.should.have.property('message');
-                    res.body.message.should.equal("Inserción correcta.");
-                    done();
-                })
-        });
-        it('should return an error message when trying to POST with an incorrect user or password', function(done){
-            chai.request(server)
-                .post('/gym/newRoutine')
-                .set('user', 'error')
-                .set('pwd', 'error')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
-                .end(function(err, res){
-                    console.log(res.body);
-                    res.should.have.status(404);
-                    res.body.should.have.property('success');
-                    res.body.success.should.equal(false);
-                    res.body.should.have.property('message');
-                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
-                    done();
-                })
-        });
-        it('should return an error message when trying to POST with an empty header', function(done) {
-            chai.request(server)
-                .post('/gym/newRoutine')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
-                .end(function(err, res) {
-                    res.should.have.status(404);
-                    res.body.should.have.property('success');
-                    res.body.success.should.equal(false);
-                    res.body.should.have.property('message');
-                    res.body.message.should.equal('Cabecera de la petición vacía o incorrecta.');
-                    done();
-                })
-        });
-        it('should return an error message when trying to POST with an empty body', function(done) {
-            chai.request(server)
-                .post('/gym/newRoutine')
-                .set('user', 'gpsAdmin')
-                .set('pwd', 'Gps@1718')
-                .end(function(err, res) {
-                    res.should.have.status(404);
-                    res.body.should.have.property('success');
-                    res.body.success.should.equal(false);
-                    res.body.should.have.property('message');
-                    res.body.message.should.equal('Cuerpo de la peticion vacío o incorrecto.');
-                    done();
-                })
-        });
-
-        after(function(done) {
-            mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result) {
-                if(err) {
-                    console.log("Error al eliminar las rutinas automaticamente");
-                    done();
-                } else {
-                    console.log("Rutinas borradas correctamente");
-                    done();
-                }
-            })
-        })
-    });
 
     describe('GET a login attempt outcome', function() {
         it('should return a successful user login attempt', function(done) {

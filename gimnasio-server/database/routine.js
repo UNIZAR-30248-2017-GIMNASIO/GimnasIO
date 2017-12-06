@@ -34,7 +34,7 @@ function deleteRoutineByName (db, args) {
     var name = args[0];
     var callback = args[1];
 
-    collection.deleteOne({name: name}, function(err, result){
+    collection.deleteMany({name: name}, function(err, result){
         if(!err) {
             if(!result){
                 callback("Exercise not found", null);
@@ -47,10 +47,11 @@ function deleteRoutineByName (db, args) {
 function updateRoutineByName (db, args) {
     var collection = db.collection('routines');
     var callback = args[5];
-    collection.update([{nameGym: args[0], name: args[1], objective: args[2],
-            relaxTime: args[3], exercises: args[4]}], function (err, result) {
+    console.log("name: " + args[1]);
+    collection.update({name: args[1]}, {nameGym: args[0], name: args[1], objective: args[2],
+            relaxTime: args[3], exercises: args[4]}, function (err, result) {
             if(err){
-                console.log('An error ocurred.');
+                console.log('An error ocurred. ' + err);
                 return callback(err);
             }
             else{
@@ -65,3 +66,4 @@ function updateRoutineByName (db, args) {
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
 exports.deleteRoutineByName = deleteRoutineByName;
+exports.updateRoutineByName = updateRoutineByName;

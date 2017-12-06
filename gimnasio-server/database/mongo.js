@@ -63,6 +63,10 @@ function getCoachKey (u, p, nameGym, callback) {
     connect(gym.getCoachKey, [nameGym, callback], u, p);
 }
 
+function getKeys (u, p, nameGym, callback) {
+    connect(gym.getKeys, [nameGym, callback], u, p);
+}
+
 function deleteGymByName (u, p, nameGym, callback) {
     connect(gym.deleteGymByName, [nameGym, callback], u, p);
 }
@@ -146,10 +150,12 @@ exports.insertNewGym=insertNewGym;
 exports.getGymByName=getGymByName;
 exports.getUserKey = getUserKey;
 exports.getCoachKey = getCoachKey;
+exports.getKeys = getKeys;
 exports.deleteGymByName = deleteGymByName;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
 exports.deleteRoutineByName = deleteRoutineByName;
+exports.updateRoutineByName = updateRoutineByName;
 exports.insertLastUpdate = insertLastUpdate;
 exports.updateLastUpdate = updateLastUpdate;
 exports.getLastUpdate = getLastUpdate;
