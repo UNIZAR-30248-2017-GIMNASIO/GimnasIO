@@ -85,7 +85,7 @@ router.post('/newRoutine', function(req, res) {
         });
     }
     else{
-        if(!req.body.nameGym || !req.body.name || !req.body.objective || !req.body.series || !req.body.rep || !req.body.relaxTime || !req.body.exercises){
+        if(!req.body.nameGym || !req.body.name || !req.body.objective || !req.body.relaxTime || !req.body.exercises){
             res.status(404).send({
                 'success': false,
                 'message': "Cuerpo de la peticion vacío o incorrecto."
@@ -94,7 +94,7 @@ router.post('/newRoutine', function(req, res) {
         else{
             mongoDb.getGymByName(req.headers.user, req.headers.pwd, req.body.nameGym, function(err, result) {
                 if(!err){
-                    mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.series, req.body.rep, req.body.relaxTime, req.body.exercises,
+                    mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.body.nameGym, req.body.name, req.body.objective, req.body.relaxTime, req.body.exercises,
                         function(err, result){
                             if(result === 'OK'){
                                 res.status(200).send({

@@ -125,7 +125,7 @@ describe('Routines', function() {
      * Insert a gym and a routine
      */
     before(function(done) {
-        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, 1, 1, [], function (err, res) {
+        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, [], function (err, res) {
             if(err){
                 console.log("Fallo al intentar insertar rutina");
                 done();
@@ -166,10 +166,6 @@ describe('Routines', function() {
                     res.body[0].name.should.be.a('string');
                     res.body[0].should.have.property('objective');
                     res.body[0].objective.should.be.a('string');
-                    res.body[0].should.have.property('series');
-                    res.body[0].series.should.be.a('Number');
-                    res.body[0].should.have.property('rep');
-                    res.body[0].rep.should.be.a('Number');
                     res.body[0].should.have.property('relaxTime');
                     res.body[0].relaxTime.should.be.a('Number');
                     res.body[0].should.have.property('exercises');
@@ -484,7 +480,7 @@ describe('Gyms', function(){
                 .post('/gym/newRoutine')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function (err, res) {
                     res.should.have.status(200);
                     res.body.should.have.property('success');
@@ -499,7 +495,7 @@ describe('Gyms', function(){
                 .post('/gym/newRoutine')
                 .set('user', 'error')
                 .set('pwd', 'error')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res){
                     console.log(res.body);
                     res.should.have.status(404);
@@ -513,7 +509,7 @@ describe('Gyms', function(){
         it('should return an error message when trying to POST with an empty header', function(done) {
             chai.request(server)
                 .post('/gym/newRoutine')
-                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "series": 2, "rep": 3, "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"nameGym": "autotest", "name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -537,6 +533,18 @@ describe('Gyms', function(){
                     done();
                 })
         });
+
+        after(function(done) {
+            mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result) {
+                if(err) {
+                    console.log("Error al eliminar las rutinas automaticamente");
+                    done();
+                } else {
+                    console.log("Rutinas borradas correctamente");
+                    done();
+                }
+            })
+        })
     });
 
     describe('GET a login attempt outcome', function() {
