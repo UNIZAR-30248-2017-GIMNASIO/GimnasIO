@@ -6,7 +6,6 @@ var request = require('request');
 function insertExercise(db,args) {
     var collection = db.collection('exercises');
     var callback = args[5];
-
     var imageURL = args[3];
 
     var destiny = "";
@@ -19,7 +18,8 @@ function insertExercise(db,args) {
         var ext = fileExtension(args[3]);
         var filename = args[0].replace(/\s+/g, '');
         filename = utf8.encode(filename);
-        destiny = './data/images/' + filename + '.' + ext;
+        console.log(getCleanedString(filename));
+        destiny = './data/images/' + getCleanedString(filename) + '.' + ext;
         download(imageURL, destiny, function () {
             console.log('Image downloaded at' + destiny);
         });
@@ -91,12 +91,30 @@ function deleteExerciseByName(db, args){
     })
 }
 
-/**
-function deleteExerciseByName(name, callback) {
+function getCleanedString(cadena){
+    // Definimos los caracteres que queremos eliminar
+    var specialChars = "!@#$^&%*()+=-[]\/{}|:<>?,.";
 
-    connect(exercise.deleteExerciseByName, [name, callback])
+    // Los eliminamos todos
+    for (var i = 0; i < specialChars.length; i++) {
+        cadena= cadena.replace(new RegExp("\\" + specialChars[i], 'gi'), '');
+    }
 
-}**/
+    // Lo queremos devolver limpio en minusculas
+    cadena = cadena.toLowerCase();
+
+    // Quitamos espacios y los sustituimos por _ porque nos gusta mas asi
+    cadena = cadena.replace(/ /g,"_");
+
+    // Quitamos acentos y "ñ". Fijate en que va sin comillas el primer parametro
+    cadena = cadena.replace(/á/gi,"a");
+    cadena = cadena.replace(/é/gi,"e");
+    cadena = cadena.replace(/í/gi,"i");
+    cadena = cadena.replace(/ó/gi,"o");
+    cadena = cadena.replace(/ú/gi,"u");
+    cadena = cadena.replace(/ñ/gi,"n");
+    return cadena;
+}
 
 exports.insertExercise = insertExercise;
 exports.getExerciseByName = getExerciseByName;
