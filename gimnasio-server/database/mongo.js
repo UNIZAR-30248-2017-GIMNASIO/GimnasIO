@@ -72,8 +72,8 @@ function deleteGymByName (u, p, nameGym, callback) {
 }
 
 //=======================================Routine tables===============================================================
-function insertRoutine(u, p, nameGym, name, objective, relaxTime, exercises, callback){
-    connect(routine.insertRoutine, [nameGym, name, objective, relaxTime, exercises, callback], u, p);
+function insertRoutine(u, p, nameGym, name, objective, exercises, callback){
+    connect(routine.insertRoutine, [nameGym, name, objective, exercises, callback], u, p);
 }
 
 function getRoutinesOfAGym(u, p, nameGym, callback) {
@@ -83,8 +83,8 @@ function deleteRoutineByName(u, p, name, callback){
     connect(routine.deleteRoutineByName, [name, callback], u, p);
 }
 
-function updateRoutineByName(u, p, nameGym, name, objective, relaxTime, exercises, callback){
-    connect(routine.updateRoutineByName, [nameGym, name, objective, relaxTime, exercises, callback], u, p);
+function updateRoutineByName(u, p, nameGym, name, objective, exercises, callback){
+    connect(routine.updateRoutineByName, [nameGym, name, objective, exercises, callback], u, p);
 }
 
 //=======================================Update tables===============================================================

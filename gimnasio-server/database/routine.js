@@ -1,9 +1,9 @@
 function insertRoutine (db, args) {
     var collection = db.collection('routines');
     console.log(args);
-    var callback = args[5];
+    var callback = args[4];
     collection.insert([{nameGym: args[0], name: args[1], objective: args[2],
-            relaxTime: args[3], exercises: args[4]}], function (err, result) {
+            exercises: args[3]}], function (err, result) {
             if(err){
                 console.log('An error ocurred.');
                 return callback(err);
@@ -46,10 +46,10 @@ function deleteRoutineByName (db, args) {
 
 function updateRoutineByName (db, args) {
     var collection = db.collection('routines');
-    var callback = args[5];
+    var callback = args[4];
     console.log("name: " + args[1]);
     collection.update({name: args[1]}, {nameGym: args[0], name: args[1], objective: args[2],
-            relaxTime: args[3], exercises: args[4]}, function (err, result) {
+            exercises: args[3]}, function (err, result) {
             if(err){
                 console.log('An error ocurred. ' + err);
                 return callback(err);
