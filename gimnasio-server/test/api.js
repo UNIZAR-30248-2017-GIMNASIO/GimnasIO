@@ -126,7 +126,7 @@ describe('Routines', function() {
      * Insert a gym and a routine
      */
     before(function(done) {
-        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", 1, [], function (err, res) {
+        mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", [], function (err, res) {
             if(err){
                 console.log("Fallo al intentar insertar rutina");
                 done();
@@ -166,8 +166,6 @@ describe('Routines', function() {
                     res.body[0].name.should.be.a('string');
                     res.body[0].should.have.property('objective');
                     res.body[0].objective.should.be.a('string');
-                    res.body[0].should.have.property('relaxTime');
-                    res.body[0].relaxTime.should.be.a('Number');
                     res.body[0].should.have.property('exercises');
                     res.body[0].exercises.should.be.an('array');
                     done();
@@ -236,8 +234,10 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"name": "autotest", "objective": "testear", "exercises": ["autotest1", "autotest2"],
+                    "repetitions": [1, 2], "series": [1, 2], "relaxTime": [2, 2]})
                 .end(function (err, res) {
+                    console.log(res.body);
                     res.should.have.status(200);
                     res.body.should.have.property('success');
                     res.body.success.should.equal(true);
@@ -253,7 +253,8 @@ describe('Routines', function() {
                 .set('pwd', 'error')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"name": "autotest", "objective": "testear", "exercises": ["autotest1", "autotest2"],
+                    "repetitions": [1, 2], "series": [1, 2], "relaxTime": [2, 2]})
                 .end(function(err, res){
                     console.log(res.body);
                     res.should.have.status(404);
@@ -267,7 +268,8 @@ describe('Routines', function() {
         it('should return an error message when trying to POST with an empty header', function(done) {
             chai.request(server)
                 .post('/routines/newRoutine')
-                .send({"name": "autotest", "objective": "testear", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"name": "autotest", "objective": "testear", "exercises": ["autotest1", "autotest2"],
+                    "repetitions": [1, 2], "series": [1, 2], "relaxTime": [2, 2]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -315,7 +317,8 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"name": "autotest", "objective": "editao", "exercises": ["autotest1", "autotest3"],
+                    "repetitions": [1, 2], "series": [1, 2], "relaxTime": [2, 2]})
                 .end(function(err, res) {
                     res.should.have.status(200);
                     res.body.should.have.property('success');

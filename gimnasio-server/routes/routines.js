@@ -99,8 +99,10 @@ router.get('/', function(req, res) {
  *     -Body: A JSON routine object
  *      -name: string
  *      -objective: string
- *      -relaxTime: int
  *      -exercises: [string]
+ *      -repetitions: [int]
+ *      -series: [int]
+ *      -relaxTime: [double]
  * Responses:
  *      200:
  *          -A feedback object
@@ -117,7 +119,8 @@ router.post('/newRoutine', function(req, res) {
         });
     }
     else{
-        if(!req.body.name || !req.body.objective || !req.body.relaxTime || !req.body.exercises){
+        if(!req.body.name || !req.body.objective || !req.body.relaxTime || !req.body.exercises
+        || !req.body.repetitions || !req.body.series){
             res.status(404).send({
                 'success': false,
                 'message': "Cuerpo de la peticion vacío o incorrecto."
@@ -140,8 +143,17 @@ router.post('/newRoutine', function(req, res) {
                         mongoDb.getGymByName(req.headers.user, req.headers.pwd, req.headers.namegym,
                             function(err, result) {
                             if(!err){
+                                var exercisesArray = {};
+                                for(var i = 0; i < req.body.exercises.length; i++) {
+                                    exercisesArray[i] = {
+                                        name: req.body.exercises[i],
+                                        repetitions: req.body.repetitions[i],
+                                        series: req.body.series[i],
+                                        relaxTime: req.body.relaxTime[i]
+                                    }
+                                }
                                 mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.headers.namegym,
-                                    req.body.name, req.body.objective, req.body.relaxTime, req.body.exercises,
+                                    req.body.name, req.body.objective, exercisesArray,
                                     function(err, result){
                                         if(result === 'OK'){
                                             res.status(200).send({
@@ -188,8 +200,10 @@ router.post('/newRoutine', function(req, res) {
  *          -key: string
  *          -name: string
  *          -objective: string
- *          -relaxTime: int
  *          -exercises: [string]
+ *          -repetitions: [int]
+ *          -series: [int]
+ *          -relaxTime: [double]
  * Responses:
  *      200:
  *          -A feedback object
@@ -220,8 +234,17 @@ router.put('/update', function(req, res) {
                     coachKey = result2;
                     // If given key is a valid user or coach key for that gym
                     if(req.headers.key === coachKey){
+                        var exercisesArray = {};
+                        for(var i = 0; i < req.body.exercises.length; i++) {
+                            exercisesArray[i] = {
+                                name: req.body.exercises[i],
+                                repetitions: req.body.repetitions[i],
+                                series: req.body.series[i],
+                                relaxTime: req.body.relaxTime[i]
+                            }
+                        }
                         mongoDb.updateRoutineByName(req.headers.user, req.headers.pwd, req.headers.namegym, req.body.name,
-                            req.body.objective, req.body.relaxTime, req.body.exercises, function(err, result) {
+                            req.body.objective, exercisesArray, function(err, result) {
                                 if(!err){
                                     res.status(200).send({
                                         'success': true,
