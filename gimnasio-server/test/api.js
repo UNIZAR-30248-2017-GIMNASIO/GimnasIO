@@ -297,7 +297,7 @@ describe('Routines', function() {
         });
 
         after(function(done) {
-            mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result) {
+            mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", "autotest", function(err, result) {
                 if(err) {
                     console.log("Error al eliminar las rutinas automaticamente");
                     done();
@@ -427,15 +427,162 @@ describe('Routines', function() {
         })
     });
 
+    describe('DELETE a routine.', function() {
+        var userKey;
+        var coachKey;
+        /*
+         * Insert a gym and a routine
+         */
+        beforeEach(function(done) {
+            mongoDb.insertRoutine("gpsAdmin", "Gps@1718", "autotest", "autotest", "autotest", [], function (err, res) {
+                if(err){
+                    console.log("Fallo al intentar insertar rutina");
+                    done();
+                }
+                else{
+                    mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, uKey, cKey) {
+                        if(err){
+                            console.log("Fallo al intentar insertar gym");
+                        }
+                        else{
+                            userKey = uKey;
+                            coachKey = cKey;
+                            console.log("Todo OK ");
+                        }
+                        done();
+                    });
+                }
+            });
+        });
+        it('should correctly delete a routine', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(200);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(true);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Rutina borrada correctamente.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with empty headers', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cabecera de la petición vacía o incorrecta.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with empty body', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Cuerpo de la petición vacío o incorrecto.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with an incorrect user or password', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'error')
+                .set('pwd', 'error')
+                .set('namegym', "autotest")
+                .set('key', coachKey)
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Usuario o contraseña incorrectos.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with an incorrect gym name', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "error")
+                .set('key', coachKey)
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Gimnasio no registrado.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with an incorrect gym name', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', "error")
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Clave del gimnasio incorrecta o inválida.');
+                    done();
+                })
+        });
+        it('should return an error when trying to delete with user key', function(done) {
+            chai.request(server)
+                .delete('/routines/delete')
+                .set('user', 'gpsAdmin')
+                .set('pwd', 'Gps@1718')
+                .set('namegym', "autotest")
+                .set('key', userKey)
+                .send({"name": "autotest"})
+                .end(function(err, res) {
+                    res.should.have.status(404);
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(false);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Permisos insuficientes.');
+                    done();
+                })
+        });
+
+    });
+
     /*
      * Delete the previously inserted routine and gym
      */
     after(function(done) {
-        mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", function(err, result){
+        mongoDb.deleteRoutineByName("gpsAdmin", "Gps@1718", "autotest", "autotest", function(err, result){
             if(err){
-                console.log("Error al ")
-            }
+                console.log("Error al borrar las rutinas")
+            } else console.log("Rutinas borradas correctamente");
             mongoDb.deleteGymByName("gpsAdmin", "Gps@1718", "autotest", function(err, result){
+                if(err) {
+                    console.log("Error al borrar el gym")
+                } else console.log("Gym borrado correctamente");
                 done();
             });
         });
