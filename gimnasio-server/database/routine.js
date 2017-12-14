@@ -32,9 +32,10 @@ function getRoutinesOfAGym (db, args) {
 function deleteRoutineByName (db, args) {
     var collection = db.collection('routines');
     var name = args[0];
-    var callback = args[1];
+    var nameGym = args[1];
+    var callback = args[2];
 
-    collection.deleteMany({name: name}, function(err, result){
+    collection.deleteMany({name: name, nameGym: nameGym}, function(err, result){
         if(!err) {
             if(!result){
                 callback("Exercise not found", null);

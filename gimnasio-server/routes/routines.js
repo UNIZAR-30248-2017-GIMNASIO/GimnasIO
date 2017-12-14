@@ -195,9 +195,9 @@ router.post('/newRoutine', function(req, res) {
  *      -Headers: Credentials
  *          -user: string
  *          -pwd: string
- *      -Body: A Routine object
- *          -nameGym: string
+ *          -namegym: string
  *          -key: string
+ *      -Body: A Routine object
  *          -name: string
  *          -objective: string
  *          -exercises: [string]
@@ -249,6 +249,85 @@ router.put('/update', function(req, res) {
                                     res.status(200).send({
                                         'success': true,
                                         'message': "Rutina actualizada correctamente."
+                                    })
+                                } else{
+                                    res.status(404).send({
+                                        'success': false,
+                                        'message': "Rutina inexistente."
+                                    })
+                                }
+                            })
+                    } else if(req.headers.key === userKey) {
+                        res.status(404).send({
+                            'success': false,
+                            'message': "Permisos insuficientes."
+                        })
+                    } else{
+                        res.status(404).send({
+                            'success': false,
+                            'message': 'Clave del gimnasio incorrecta o inválida.'
+                        });
+                    }
+                }
+                else{ //Error means the gym is not on the database, therefore we cannot continue.
+                    res.status(404).send({
+                        'success': false,
+                        'message': err
+                    });
+                }
+            });
+        }
+    }
+});
+
+/**
+ * Type: DELETE
+ * Name: routines/delete
+ * Description: Deletes the specified Routine and returns for a given Gym and returns a feedback object.
+ * Request:
+ *      -Headers: Credentials
+ *          -user: string
+ *          -pwd: string
+ *          -namegym: string
+ *          -key: string
+ *      -Body: The name of the routine desired
+ *          -name: string
+ * Responses:
+ *      200:
+ *          -A feedback object
+ *      404:
+ *          -A feedback object
+ *      500:
+ *          -A feedback object
+ */
+router.delete('/delete', function(req, res) {
+    var coachKey;
+    var userKey;
+    if(!req.headers.user || !req.headers.pwd || !req.headers.namegym || !req.headers.key) {
+        res.status(404).send({
+            'success': false,
+            'message': 'Cabecera de la petición vacía o incorrecta.'
+        })
+    } else {
+        if(!req.body.name) {
+            res.status(404).send({
+                'success': false,
+                'message': 'Cuerpo de la petición vacío o incorrecto.'
+            })
+        } else {
+            mongoDb.getKeys(req.headers.user, req.headers.pwd, req.headers.namegym, function (err, result, result2){
+                console.log(result);
+                if(!err){
+                    userKey = result;
+                    coachKey = result2;
+                    // If given key is a valid user or coach key for that gym
+                    if(req.headers.key === coachKey){
+                        mongoDb.deleteRoutineByName(req.headers.user, req.headers.pwd, req.body.name, req.headers.namegym,
+                            function(err, result) {
+                                if(!err){
+                                    res.status(200).send({
+                                        'success': true,
+                                        'message': "Rutina borrada correctamente."
                                     })
                                 } else{
                                     res.status(404).send({
