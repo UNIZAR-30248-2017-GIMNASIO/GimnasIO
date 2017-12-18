@@ -83,8 +83,12 @@ function deleteRoutineByName(u, p, name, nameGym, callback){
     connect(routine.deleteRoutineByName, [name, nameGym, callback], u, p);
 }
 
-function updateRoutineByName(u, p, nameGym, name, objective, exercises, callback){
-    connect(routine.updateRoutineByName, [nameGym, name, objective, exercises, callback], u, p);
+function deleteRoutineById(u, p, id, nameGym, callback){
+    connect(routine.deleteRoutineById, [id, nameGym, callback], u, p);
+}
+
+function updateRoutineById(u, p, id, nameGym, name, objective, exercises, callback){
+    connect(routine.updateRoutineById, [id, nameGym, name, objective, exercises, callback], u, p);
 }
 
 //=======================================Update tables===============================================================
@@ -155,7 +159,8 @@ exports.deleteGymByName = deleteGymByName;
 exports.insertRoutine = insertRoutine;
 exports.getRoutinesOfAGym = getRoutinesOfAGym;
 exports.deleteRoutineByName = deleteRoutineByName;
-exports.updateRoutineByName = updateRoutineByName;
+exports.deleteRoutineById = deleteRoutineById;
+exports.updateRoutineById = updateRoutineById;
 exports.insertLastUpdate = insertLastUpdate;
 exports.updateLastUpdate = updateLastUpdate;
 exports.getLastUpdate = getLastUpdate;
