@@ -11,6 +11,20 @@ chai.use(chaiHttp);
 chai.use(require('chai-json'));
 //Our parent block
 
+describe('Undefined', function() {
+    describe('GET a non-existant page', function() {
+        it('should return a 404 error page', function(done) {
+            chai.request(server)
+                .get('/doesntexist')
+                .end(function(err, res){
+                    res.should.have.status(404);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        })
+    })
+});
+
 describe('Index', function() {
     describe('GET index', function() {
         it('should return an index page', function(done) {
@@ -122,6 +136,7 @@ describe('Routines', function() {
 
     var userKey;
     var coachKey;
+    var id;
     /*
      * Insert a gym and a routine
      */
@@ -132,6 +147,7 @@ describe('Routines', function() {
                 done();
             }
             else{
+                id = res;
                 mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, uKey, cKey) {
                     if(err){
                         console.log("Fallo al intentar insertar gym");
@@ -317,7 +333,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "editao", "exercises": ["autotest1", "autotest3"],
+                .send({"id": id, "name": "autotest", "objective": "editao", "exercises": ["autotest1", "autotest3"],
                     "repetitions": [1, 2], "series": [1, 2], "relaxTime": [2, 2]})
                 .end(function(err, res) {
                     res.should.have.status(200);
@@ -364,7 +380,7 @@ describe('Routines', function() {
                 .set('pwd', 'error')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"id": id, "name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -381,7 +397,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "error")
                 .set('key', coachKey)
-                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"id": id, "name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -398,7 +414,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', "error")
-                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"id": id, "name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -415,7 +431,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', userKey)
-                .send({"name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
+                .send({"id": id, "name": "autotest", "objective": "editao", "relaxTime": 1, "exercises": ["autotest","autotest2"]})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -430,6 +446,7 @@ describe('Routines', function() {
     describe('DELETE a routine.', function() {
         var userKey;
         var coachKey;
+        var id;
         /*
          * Insert a gym and a routine
          */
@@ -440,6 +457,7 @@ describe('Routines', function() {
                     done();
                 }
                 else{
+                    id = res;
                     mongoDb.insertNewGym("gpsAdmin", "Gps@1718", "autotest", function (err, uKey, cKey) {
                         if(err){
                             console.log("Fallo al intentar insertar gym");
@@ -461,7 +479,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(200);
                     res.body.should.have.property('success');
@@ -474,7 +492,7 @@ describe('Routines', function() {
         it('should return an error when trying to delete with empty headers', function(done) {
             chai.request(server)
                 .delete('/routines/delete')
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -507,7 +525,7 @@ describe('Routines', function() {
                 .set('pwd', 'error')
                 .set('namegym', "autotest")
                 .set('key', coachKey)
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -524,7 +542,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "error")
                 .set('key', coachKey)
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -534,14 +552,14 @@ describe('Routines', function() {
                     done();
                 })
         });
-        it('should return an error when trying to delete with an incorrect gym name', function(done) {
+        it('should return an error when trying to delete with an incorrect gym key', function(done) {
             chai.request(server)
                 .delete('/routines/delete')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', "error")
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
@@ -558,7 +576,7 @@ describe('Routines', function() {
                 .set('pwd', 'Gps@1718')
                 .set('namegym', "autotest")
                 .set('key', userKey)
-                .send({"name": "autotest"})
+                .send({"id": id})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');

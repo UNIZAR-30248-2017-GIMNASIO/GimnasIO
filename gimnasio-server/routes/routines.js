@@ -105,7 +105,10 @@ router.get('/', function(req, res) {
  *      -relaxTime: [double]
  * Responses:
  *      200:
- *          -A feedback object
+ *          -A feedback object:
+ *              -success: true | false
+ *              -message: A description of how the operation went
+ *              -id: The id of the routine created
  *      400:
  *          -A feedback object
  *      500:
@@ -119,8 +122,8 @@ router.post('/newRoutine', function(req, res) {
         });
     }
     else{
-        if(!req.body.name || !req.body.objective || !req.body.relaxTime || !req.body.exercises
-        || !req.body.repetitions || !req.body.series){
+        if(!req.body.name || req.body.objective === undefined || req.body.relaxTime === undefined
+            || req.body.exercises === undefined || req.body.repetitions === undefined || req.body.series === undefined){
             res.status(404).send({
                 'success': false,
                 'message': "Cuerpo de la peticion vacío o incorrecto."
@@ -155,10 +158,11 @@ router.post('/newRoutine', function(req, res) {
                                 mongoDb.insertRoutine(req.headers.user, req.headers.pwd, req.headers.namegym,
                                     req.body.name, req.body.objective, exercisesArray,
                                     function(err, result){
-                                        if(result === 'OK'){
+                                        if(err === null){
                                             res.status(200).send({
                                                 'success': true,
-                                                'message': "Inserción correcta."
+                                                'message': "Inserción correcta.",
+                                                'id': result
                                             });
                                         }
                                         else res.status(404).send({
@@ -198,6 +202,7 @@ router.post('/newRoutine', function(req, res) {
  *          -namegym: string
  *          -key: string
  *      -Body: A Routine object
+ *          -id: string
  *          -name: string
  *          -objective: string
  *          -exercises: [string]
@@ -221,7 +226,8 @@ router.put('/update', function(req, res) {
             'message': 'Cabecera de la peticion vacía o incorrecta.'
         })
     } else {
-        if(!req.body.name || !req.body.objective || !req.body.relaxTime || !req.body.exercises) {
+        if(!req.body.id || req.body.name === undefined || req.body.objective === undefined || req.body.relaxTime === undefined
+            || req.body.exercises === undefined) {
             res.status(404).send({
                 'success': false,
                 'message': 'Cuerpo de la peticion vacío o incorrecto.'
@@ -243,8 +249,9 @@ router.put('/update', function(req, res) {
                                 relaxTime: req.body.relaxTime[i]
                             }
                         }
-                        mongoDb.updateRoutineByName(req.headers.user, req.headers.pwd, req.headers.namegym, req.body.name,
-                            req.body.objective, exercisesArray, function(err, result) {
+                        mongoDb.updateRoutineById(req.headers.user, req.headers.pwd, req.body.id,
+                            req.headers.namegym, req.body.name, req.body.objective, exercisesArray,
+                            function(err, result) {
                                 if(!err){
                                     res.status(200).send({
                                         'success': true,
@@ -290,8 +297,8 @@ router.put('/update', function(req, res) {
  *          -pwd: string
  *          -namegym: string
  *          -key: string
- *      -Body: The name of the routine desired
- *          -name: string
+ *      -Body: The id of the routine desired
+ *          -id: string
  * Responses:
  *      200:
  *          -A feedback object
@@ -309,7 +316,7 @@ router.delete('/delete', function(req, res) {
             'message': 'Cabecera de la petición vacía o incorrecta.'
         })
     } else {
-        if(!req.body.name) {
+        if(!req.body.id) {
             res.status(404).send({
                 'success': false,
                 'message': 'Cuerpo de la petición vacío o incorrecto.'
@@ -322,7 +329,7 @@ router.delete('/delete', function(req, res) {
                     coachKey = result2;
                     // If given key is a valid user or coach key for that gym
                     if(req.headers.key === coachKey){
-                        mongoDb.deleteRoutineByName(req.headers.user, req.headers.pwd, req.body.name, req.headers.namegym,
+                        mongoDb.deleteRoutineById(req.headers.user, req.headers.pwd, req.body.id, req.headers.namegym,
                             function(err, result) {
                                 if(!err){
                                     res.status(200).send({
