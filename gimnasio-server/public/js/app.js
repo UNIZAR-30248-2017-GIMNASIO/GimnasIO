@@ -8,62 +8,27 @@ function myFunction() {
     }
 }
 
-function setSpinners() {
-    let safeIconn = document.getElementById('safeIcon');
-    let verifyIconn = document.getElementById('verifiedIcon');
-    let loadingIconn = document.getElementById('loadingIcon');
-    safeIconn.setAttribute('data-icon', 'spinner');
-    safeIconn.classList.add('fa-spin');
-    verifyIconn.setAttribute('data-icon', 'spinner');
-    verifyIconn.classList.add('fa-spin');
-    loadingIconn.setAttribute('data-icon', 'spinner');
-    loadingIconn.classList.add('fa-spin');
-}
-// Get the modal
-let modal = document.getElementById('myModal');
-let safeIcon;
-let verifyIcon;
-let loadingIcon;
-let isSafe = false;
-let isVerified = false;
-
 $(document).ready(() => {
 
 
-  $('#shortener').submit((event) => {
-    modal.style.display = "block";
+  $('#registro').submit((event) => {
     event.preventDefault();
       $.ajax({
       url: '/gym/newGym',
       type: 'POST',
+          beforeSend(request) { //TODO: pasar a archivo secreto, no dejar hardcodeado!
+              request.setRequestHeader("user", "gpsAdmin");
+              request.setRequestHeader("pwd", "Gps@1718");
+          },
+      datatype: "json",
       data: $(event.currentTarget).serialize(),
       success(msg) {
-          $('#result').html(`<div class='alert alert-success lead'><a target='_blank' href='${msg.uri}'>${msg.uri}</a></br><p>The link will expire ${msg.expirationDate} at ${msg.expirationTime}</p></div>`);
+          $('#result').html(`<div class='alert alert-success lead'><p>Registrado con éxito.<br>Hemos enviado las instrucciones al email facilitado.</p></div>`);
       },
-      error() {
-          setSpinners();
-          modal.style.display = "none";
-        $('#result').html("<div class='alert alert-danger lead'>Um... Well... Something didn't go as planned.</br>Maybe try again?</div>");
+      error(msg) {
+        $('#result').html("<div class='alert alert-danger lead'>¡Vaya! Parece que algo ha ido mal.</br>${msg.message}</div>");
       },
     });
-
-      if(isSafe && isVerified) {
-
-
-      }
-
   });
-
-  $('#generate-new-qr').click(() => {
-    $('#qr-adder').before(qrCardTemplate(numberOfQrsGenerated));
-    $(`#qr-generator-${numberOfQrsGenerated}`).submit(qrGeneratorHandler(numberOfQrsGenerated));
-    $(`#qr-logo-${numberOfQrsGenerated}`).change(logoChangeHandler(numberOfQrsGenerated));
-    numberOfQrsGenerated += 1;
-    if (numberOfQrsGenerated > 2) {
-      $('#qr-adder').remove();
-    }
-  });
-
-
 
 });

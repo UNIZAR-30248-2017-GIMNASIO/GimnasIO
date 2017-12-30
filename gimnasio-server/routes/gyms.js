@@ -11,9 +11,8 @@ var mongoDb = require('../database/mongo');
  *       -user: string 
  *       -pwd: string
  *      Body:
- *          -user: string
- *          -pwd: string
  *          -nameGym: string
+ *          -email: string TODO: email!
  * Responses:
  *      200:
  *          -JSON object containing access keys:
@@ -27,6 +26,8 @@ var mongoDb = require('../database/mongo');
 router.post('/newGym', function(req, res) {
     var user = req.headers.user;
     var pwd = req.headers.pwd;
+    console.log(req.headers.user + " " + req.headers.pwd);
+    console.log(req.body);
     if(!req.body.nameGym || !req.headers.user || !req.headers.pwd){
         res.status(404).send({
             'success': false,
