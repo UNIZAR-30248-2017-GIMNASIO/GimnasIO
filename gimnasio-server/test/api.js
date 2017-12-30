@@ -778,18 +778,18 @@ describe('Gyms', function(){
     });
 
     describe('POST a new gym', function() {
-        it('should POST a new gym and return the set of keys', function(done) {
+        it('should POST a new gym and return success info', function(done) {
             chai.request(server)
                 .post('/gym/newGym')
                 .set('user', 'gpsAdmin')
                 .set('pwd', 'Gps@1718')
-                .send({nameGym: "autotest"})
+                .send({nameGym: "autotest", email:"example@example.org"})
                 .end(function(err, res) {
                     res.should.have.status(200);
-                    res.body.should.have.property('coachKey');
-                    res.body.coachKey.should.be.a('String');
-                    res.body.should.have.property('userKey');
-                    res.body.userKey.should.be.a('String');
+                    res.body.should.have.property('success');
+                    res.body.success.should.equal(true);
+                    res.body.should.have.property('message');
+                    res.body.message.should.equal('Registrado correctamente');
                     done();
                 })
         });

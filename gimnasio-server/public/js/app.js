@@ -22,10 +22,10 @@ $(document).ready(() => {
           },
       datatype: "json",
       data: $(event.currentTarget).serialize(),
-      success(msg) {
+      success() {
           $('#result').html(`<div class='alert alert-success lead'><p>Registrado con éxito.<br>Hemos enviado las instrucciones al email facilitado.</p></div>`);
       },
-      error(msg) {
+      error() {
         $('#result').html("<div class='alert alert-danger lead'>¡Vaya! Parece que algo ha ido mal.</br>${msg.message}</div>");
       },
     });

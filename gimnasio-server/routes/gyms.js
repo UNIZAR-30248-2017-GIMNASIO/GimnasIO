@@ -44,7 +44,7 @@ router.post('/newGym', function(req, res) {
                    "\nDisfruta de nuestros servicios!"+
                    "\nIOdev.";
                var to = req.body.email;
-
+                //TODO: pensar si mandar o no las claves por correo y como simular pago
                var smtpConfig = {
                    host: 'smtp.gmail.com',
                    post: 587,
@@ -52,7 +52,7 @@ router.post('/newGym', function(req, res) {
                    auth: {
                        user: "verif.iodev@gmail.com",
                        // TODO: Cambiar por pass
-                       pass: "****"
+                       pass: "Albertoesunpatan123"
                    }
                };
 
@@ -64,24 +64,30 @@ router.post('/newGym', function(req, res) {
                    subject: "Registro GimnasIO",
                    text: text
                };
-               transporter.sendMail(message, function (error, res) {
+
+               var status = 500;
+               var success = false;
+               var messagee = "";
+
+               transporter.sendMail(message, function (error, ress) {
                    if(error) {
                        console.log("error enviando email");
-                       res.status(500).send({
-                           success: false,
-                           message: "Error interno del servidor."
-                       })
+                       status = 500;
+                       success = false;
+                       messagee = "Error enviando email"
                    } else {
-                       res.status(200).send({
-                           success: true,
-                           message: "Registrado correctamente"
-                       })
+                       console.log("mail enviado de puta madre");
+                       status = 200;
+                       success = true;
+                       messagee = "Registrado correctamente";
                    }
-               });
-                // res.status(200).send({
-                //     "userKey": userKey,
-                //     "coachKey": coachKey
-                // })
+                   console.log(success + " " + messagee);
+                   res.status(status).send({
+                       success: success,
+                       message: messagee
+                   })
+                });
+
             }
             else{
                 res.status(404).send({
