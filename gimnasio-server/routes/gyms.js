@@ -52,7 +52,7 @@ router.post('/newGym', function(req, res) {
                    auth: {
                        user: "verif.iodev@gmail.com",
                        // TODO: Cambiar por pass
-                       pass: "Albertoesunpatan123"
+                       pass: "***"
                    }
                };
 
