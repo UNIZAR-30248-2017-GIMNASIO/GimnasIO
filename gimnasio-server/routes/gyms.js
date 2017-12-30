@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var nodemailer = require('nodemailer');
 
 var mongoDb = require('../database/mongo');
 /**
@@ -37,10 +38,50 @@ router.post('/newGym', function(req, res) {
     else{
         mongoDb.insertNewGym(user, pwd, req.body.nameGym, function(err, userKey, coachKey){
             if(err === null){
-                res.status(200).send({
-                    "userKey": userKey,
-                    "coachKey": coachKey
-                })
+               var from = "verif.iodev@gmail.com";
+               var text = "Tus credenciales son: \nClave de Usuario: " + userKey +
+                   "\nClave de Entrenador: " + coachKey +
+                   "\nDisfruta de nuestros servicios!"+
+                   "\nIOdev.";
+               var to = req.body.email;
+
+               var smtpConfig = {
+                   host: 'smtp.gmail.com',
+                   post: 587,
+                   secure: false,
+                   auth: {
+                       user: "verif.iodev@gmail.com",
+                       // TODO: Cambiar por pass
+                       pass: "****"
+                   }
+               };
+
+               var transporter = nodemailer.createTransport(smtpConfig);
+
+               var message = {
+                   from: from,
+                   to: to,
+                   subject: "Registro GimnasIO",
+                   text: text
+               };
+               transporter.sendMail(message, function (error, res) {
+                   if(error) {
+                       console.log("error enviando email");
+                       res.status(500).send({
+                           success: false,
+                           message: "Error interno del servidor."
+                       })
+                   } else {
+                       res.status(200).send({
+                           success: true,
+                           message: "Registrado correctamente"
+                       })
+                   }
+               });
+                // res.status(200).send({
+                //     "userKey": userKey,
+                //     "coachKey": coachKey
+                // })
             }
             else{
                 res.status(404).send({
