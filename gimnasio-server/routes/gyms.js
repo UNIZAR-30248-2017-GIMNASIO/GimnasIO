@@ -29,7 +29,7 @@ router.post('/newGym', function(req, res) {
     var pwd = req.headers.pwd;
     console.log(req.headers.user + " " + req.headers.pwd);
     console.log(req.body);
-    if(!req.body.nameGym || !req.headers.user || !req.headers.pwd){
+    if(!req.body.nameGym || !req.headers.user || !req.headers.pwd || !req.body.email){
         res.status(404).send({
             'success': false,
             'message': 'Parámetros incompletos.'

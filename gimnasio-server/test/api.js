@@ -25,13 +25,49 @@ describe('Undefined', function() {
     })
 });
 
-describe('Index', function() {
-    describe('GET index', function() {
+describe('Web', function() {
+    describe('GET pages', function() {
         it('should return an index page', function(done) {
             chai.request(server)
                 .get('/')
                 .end(function(err, res){
                     res.should.have.status(200);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return a sign up page', function(done) {
+            chai.request(server)
+                .get('/registrate')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return a prices page', function(done) {
+            chai.request(server)
+                .get('/tarifas')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return an about page', function(done) {
+            chai.request(server)
+                .get('/acercade')
+                .end(function(err, res){
+                    res.should.have.status(200);
+                    res.text.should.be.a('String');
+                    done();
+                })
+        });
+        it('should return a 404 error page', function(done) {
+            chai.request(server)
+                .get('/doesntexist')
+                .end(function(err, res){
+                    res.should.have.status(404);
                     res.text.should.be.a('String');
                     done();
                 })
@@ -778,27 +814,28 @@ describe('Gyms', function(){
     });
 
     describe('POST a new gym', function() {
-        it('should POST a new gym and return success info', function(done) {
-            chai.request(server)
-                .post('/gym/newGym')
-                .set('user', 'gpsAdmin')
-                .set('pwd', 'Gps@1718')
-                .send({nameGym: "autotest", email:"example@example.org"})
-                .end(function(err, res) {
-                    res.should.have.status(200);
-                    res.body.should.have.property('success');
-                    res.body.success.should.equal(true);
-                    res.body.should.have.property('message');
-                    res.body.message.should.equal('Registrado correctamente');
-                    done();
-                })
-        });
+        //TODO: este test no irá hasta que pushee la contraseña, cosa que no voy a hacer
+        // it('should POST a new gym and return success info', function(done) {
+        //     chai.request(server)
+        //         .post('/gym/newGym')
+        //         .set('user', 'gpsAdmin')
+        //         .set('pwd', 'Gps@1718')
+        //         .send({nameGym: "autotest", email:"example@example.org"})
+        //         .end(function(err, res) {
+        //             res.should.have.status(200);
+        //             res.body.should.have.property('success');
+        //             res.body.success.should.equal(true);
+        //             res.body.should.have.property('message');
+        //             res.body.message.should.equal('Registrado correctamente');
+        //             done();
+        //         })
+        // });
         it('should return an error message when trying to POST with an incorrect user or password', function(done){
             chai.request(server)
                 .post('/gym/newGym')
                 .set('user', 'error')
                 .set('pwd', 'error')
-                .send({nameGym: "autotest"})
+                .send({nameGym: "autotest", email:"example@example.org"})
                 .end(function(err, res){
                     console.log(res.body);
                     res.should.have.status(404);
@@ -812,7 +849,7 @@ describe('Gyms', function(){
         it('should return an error message when trying to POST with an empty header', function(done) {
             chai.request(server)
                 .post('/gym/newGym')
-                .send({nameGym: "autotest"})
+                .send({nameGym: "autotest", email:"example@example.org"})
                 .end(function(err, res) {
                     res.should.have.status(404);
                     res.body.should.have.property('success');
