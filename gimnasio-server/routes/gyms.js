@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var nodemailer = require('nodemailer');
 
 var mongoDb = require('../database/mongo');
 /**
@@ -11,9 +12,8 @@ var mongoDb = require('../database/mongo');
  *       -user: string 
  *       -pwd: string
  *      Body:
- *          -user: string
- *          -pwd: string
  *          -nameGym: string
+ *          -email: string TODO: email!
  * Responses:
  *      200:
  *          -JSON object containing access keys:
@@ -27,7 +27,9 @@ var mongoDb = require('../database/mongo');
 router.post('/newGym', function(req, res) {
     var user = req.headers.user;
     var pwd = req.headers.pwd;
-    if(!req.body.nameGym || !req.headers.user || !req.headers.pwd){
+    console.log(req.headers.user + " " + req.headers.pwd);
+    console.log(req.body);
+    if(!req.body.nameGym || !req.headers.user || !req.headers.pwd || !req.body.email){
         res.status(404).send({
             'success': false,
             'message': 'Parámetros incompletos.'
@@ -36,10 +38,56 @@ router.post('/newGym', function(req, res) {
     else{
         mongoDb.insertNewGym(user, pwd, req.body.nameGym, function(err, userKey, coachKey){
             if(err === null){
-                res.status(200).send({
-                    "userKey": userKey,
-                    "coachKey": coachKey
-                })
+               var from = "verif.iodev@gmail.com";
+               var text = "Tus credenciales son: \nClave de Usuario: " + userKey +
+                   "\nClave de Entrenador: " + coachKey +
+                   "\nDisfruta de nuestros servicios!"+
+                   "\nIOdev.";
+               var to = req.body.email;
+                //TODO: pensar si mandar o no las claves por correo y como simular pago
+               var smtpConfig = {
+                   host: 'smtp.gmail.com',
+                   post: 587,
+                   secure: false,
+                   auth: {
+                       user: "verif.iodev@gmail.com",
+                       // TODO: Cambiar por pass
+                       pass: "***"
+                   }
+               };
+
+               var transporter = nodemailer.createTransport(smtpConfig);
+
+               var message = {
+                   from: from,
+                   to: to,
+                   subject: "Registro GimnasIO",
+                   text: text
+               };
+
+               var status = 500;
+               var success = false;
+               var messagee = "";
+
+               transporter.sendMail(message, function (error, ress) {
+                   if(error) {
+                       console.log("error enviando email");
+                       status = 500;
+                       success = false;
+                       messagee = "Error enviando email"
+                   } else {
+                       console.log("mail enviado de puta madre");
+                       status = 200;
+                       success = true;
+                       messagee = "Registrado correctamente";
+                   }
+                   console.log(success + " " + messagee);
+                   res.status(status).send({
+                       success: success,
+                       message: messagee
+                   })
+                });
+
             }
             else{
                 res.status(404).send({
