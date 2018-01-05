@@ -20,4 +20,10 @@ router.get('/tarifas', function(req, res, next) {
 router.get('/acercade', function(req, res, next) {
     res.render('acercade');
 });
+
+/* GET acerca de page. */
+router.get('/descarga', function(req, res, next) {
+    console.log("llamada a descarga");
+    res.download('./public/apk/gimnasio.apk');
+});
 module.exports = router;
