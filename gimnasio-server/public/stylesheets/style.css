@@ -97,6 +97,11 @@ body {
   width:395px;
   display:inline-block;
 }
+
+.card-title {
+  font: 35px "Avenir Black", Helvetica, Arial, sans-serif;
+}
+
 .card2 {
   background: transparent;
   outline:none !important;
